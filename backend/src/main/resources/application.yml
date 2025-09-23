@@ -1,0 +1,44 @@
+# Configuration du serveur
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+# Configuration de la base de données PostgreSQL
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/Fibaya
+    username: postgres
+    password: 5334
+    driver-class-name: org.postgresql.Driver
+  
+  # Configuration JPA/Hibernate
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  
+  # Configuration CORS pour permettre les requêtes depuis Flutter
+  web:
+    cors:
+      allowed-origins: "*"
+      allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
+      allowed-headers: "*"
+
+# Configuration des logs
+logging:
+  level:
+    com.fibaya.backend: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+# Configuration de l'application
+app:
+  name: "Fibaya Backend"
+  version: "1.0.0"
+  description: "API Backend pour l'application Fibaya"

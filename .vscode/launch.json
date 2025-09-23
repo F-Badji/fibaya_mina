@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Client App",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_client.dart",
+      "args": [],
+      "console": "debugConsole"
+    },
+    {
+      "name": "Prestataire App",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_prestataire.dart",
+      "args": [],
+      "console": "debugConsole"
+    },
+    {
+      "name": "Admin App (Web)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_admin.dart",
+      "deviceId": "chrome",
+      "args": [],
+      "console": "debugConsole"
+    }
+  ]
+}
+
