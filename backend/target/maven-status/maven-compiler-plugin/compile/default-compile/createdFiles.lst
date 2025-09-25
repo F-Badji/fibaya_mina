@@ -9,7 +9,10 @@ com/fibaya/backend/models/Notification$NotificationStatus.class
 com/fibaya/backend/models/Prestataire.class
 com/fibaya/backend/models/Reservation.class
 com/fibaya/backend/models/User$UserType.class
+com/fibaya/backend/services/PrestataireService.class
 com/fibaya/backend/repositories/NotificationRepository.class
 com/fibaya/backend/models/Notification.class
 com/fibaya/backend/models/Service.class
 com/fibaya/backend/services/AuthService.class
+com/fibaya/backend/controllers/HomeController.class
+com/fibaya/backend/controllers/PrestataireController.class

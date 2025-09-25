@@ -43,11 +43,11 @@ public class Service {
     private LocalDateTime updatedAt;
     
     // Relations
-    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Prestataire> prestataires;
+    // @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // private List<Prestataire> prestataires;
     
-    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Reservation> reservations;
+    // @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // private List<Reservation> reservations;
     
     @PreUpdate
     protected void onUpdate() {

@@ -4,6 +4,10 @@ class AppConfig {
   /// MODE PRODUCTION : false = suivre le flow complet (Splash -> Auth -> etc.)
   static const bool isDevelopmentMode = true;
 
+  /// URL de base de l'API backend
+  /// Pour l'émulateur Android, utilisez localhost avec port forwarding
+  static const String baseApiUrl = 'http://localhost:8080/api';
+
   /// Pour basculer facilement :
   /// - Développement : isDevelopmentMode = true
   /// - Production : isDevelopmentMode = false

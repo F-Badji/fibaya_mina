@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "prestataires")
@@ -19,41 +18,65 @@ public class Prestataire {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(nullable = false)
+    private String nom;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id", nullable = false)
-    private Service service;
+    @Column(nullable = false)
+    private String prenom;
     
-    @Column(precision = 10, scale = 2)
-    private BigDecimal pricePerHour;
+    @Column(nullable = false, unique = true)
+    private String telephone;
     
     @Column
-    private Integer experienceYears = 0;
+    private String email;
     
     @Column
-    private Integer completedJobs = 0;
+    private String adresse;
+    
+    @Column
+    private Double latitude;
+    
+    @Column
+    private Double longitude;
+    
+    @Column(nullable = false)
+    private String serviceType;
     
     @Column(precision = 3, scale = 2)
     private BigDecimal rating = BigDecimal.ZERO;
     
-    @Column(nullable = false)
-    private Boolean isAvailable = true;
-    
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column
+    private Integer nombreEvaluations = 0;
     
     @Column
-    private LocalDateTime updatedAt;
+    private String prixParHeure;
     
-    // Relations
-    @OneToMany(mappedBy = "prestataire", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Reservation> reservations;
+    @Column
+    private String experience;
+    
+    @Column
+    private Integer jobsCompletes = 0;
+    
+    @Column(nullable = false)
+    private String statut = "DISPONIBLE";
+    
+    @Column
+    private String typeService = "LES_DEUX";
+    
+    @Column(columnDefinition = "TEXT")
+    private String description;
+    
+    @Column
+    private String imageProfil;
+    
+    @Column(nullable = false)
+    private LocalDateTime dateCreation = LocalDateTime.now();
+    
+    @Column
+    private LocalDateTime dateModification;
     
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+        dateModification = LocalDateTime.now();
     }
 }

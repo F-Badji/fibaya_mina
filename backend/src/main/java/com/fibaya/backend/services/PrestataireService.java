@@ -108,7 +108,7 @@ public class PrestataireService {
         
         // Note moyenne
         double noteMoyenne = allPrestataires.stream()
-            .mapToDouble(Prestataire::getRating)
+            .mapToDouble(p -> p.getRating().doubleValue())
             .average()
             .orElse(0.0);
         statistiques.put("noteMoyenne", noteMoyenne);

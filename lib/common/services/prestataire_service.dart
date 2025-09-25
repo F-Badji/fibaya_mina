@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/prestataire.dart';
+import '../config.dart';
 
 class PrestataireService {
-  static const String baseUrl = 'http://localhost:8080/api';
+  static String get baseUrl => AppConfig.baseApiUrl;
 
   // Utiliser les vraies données de la base de données PostgreSQL
 

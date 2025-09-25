@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'client_app/screens/home_screen.dart';
+import 'prestataire_app/screens/prestataire_registration_screen_api.dart';
+import 'prestataire_app/screens/confirmation_screen.dart';
 import 'common/theme.dart';
 
 void main() {
@@ -29,6 +31,11 @@ class FibayaMinaApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const HomeScreen(),
+      routes: {
+        '/prestataire-registration': (context) =>
+            const PrestataireRegistrationScreenAPI(),
+        '/confirmation': (context) => const ConfirmationScreen(),
+      },
     );
   }
 }

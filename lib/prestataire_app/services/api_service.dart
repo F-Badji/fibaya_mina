@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../config.dart';
+import '../../common/config.dart';
 
 class ApiService {
   static String get baseUrl => AppConfig.baseApiUrl;
@@ -10,6 +10,42 @@ class ApiService {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   };
+
+  // Obtenir tous les pays
+  static Future<List<Country>> getAllCountries() async {
+    try {
+      print('🌐 Tentative de connexion à: $baseUrl/countries');
+      print('📡 Headers: $headers');
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/countries'),
+        headers: headers,
+      );
+
+      print('📊 Status Code: ${response.statusCode}');
+      print('📄 Response Headers: ${response.headers}');
+      print(
+        '📝 Response Body (first 200 chars): ${response.body.length > 200 ? response.body.substring(0, 200) + "..." : response.body}',
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> jsonData = json.decode(response.body);
+        List<Country> countries = jsonData
+            .map((json) => Country.fromJson(json))
+            .toList();
+        print('✅ ${countries.length} pays chargés avec succès');
+        return countries;
+      } else {
+        print('❌ Erreur API: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Erreur lors du chargement des pays: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      print('Erreur API getAllCountries: $e');
+      rethrow;
+    }
+  }
 
   // Vérifier si un utilisateur existe
   static Future<Map<String, dynamic>> checkUserExists(String phone) async {
@@ -124,5 +160,35 @@ class ApiService {
       print('Erreur getUserInfo: $e');
       return null;
     }
+  }
+}
+
+// Modèle Country
+class Country {
+  final int id;
+  final String name;
+  final String code;
+  final String flag;
+  final String continent;
+  final bool isActive;
+
+  Country({
+    required this.id,
+    required this.name,
+    required this.code,
+    required this.flag,
+    required this.continent,
+    required this.isActive,
+  });
+
+  factory Country.fromJson(Map<String, dynamic> json) {
+    return Country(
+      id: json['id'],
+      name: json['name'],
+      code: json['code'],
+      flag: json['flag'],
+      continent: json['continent'],
+      isActive: json['isActive'],
+    );
   }
 }

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'screens/splash_screen.dart';
 import 'screens/welcome_screen.dart';
-import 'screens/prestataire_registration_screen.dart';
+import 'screens/prestataire_registration_screen_api.dart';
+import 'screens/confirmation_screen.dart';
 import 'screens/location_permission_screen.dart';
 import 'screens/home_screen.dart';
 
@@ -51,7 +52,8 @@ class FibayaPrestataireApp extends StatelessWidget {
       routes: {
         '/welcome': (context) => const WelcomeScreen(),
         '/prestataire-registration': (context) =>
-            const PrestataireRegistrationScreen(),
+            const PrestataireRegistrationScreenAPI(),
+        '/confirmation': (context) => const ConfirmationScreen(),
         '/location-permission': (context) => const LocationPermissionScreen(),
         '/home': (context) => const HomeScreen(),
       },

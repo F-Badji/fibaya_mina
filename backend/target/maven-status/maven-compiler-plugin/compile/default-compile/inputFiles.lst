@@ -1,8 +1,10 @@
+/Users/macbook/Desktop/fibaya_mina/backend/src/main/java/com/fibaya/backend/services/PrestataireService.java
 /Users/macbook/Desktop/fibaya_mina/backend/src/main/java/com/fibaya/backend/controllers/AuthController.java
 /Users/macbook/Desktop/fibaya_mina/backend/src/main/java/com/fibaya/backend/repositories/NotificationRepository.java
 /Users/macbook/Desktop/fibaya_mina/backend/src/main/java/com/fibaya/backend/models/Reservation.java
 /Users/macbook/Desktop/fibaya_mina/backend/src/main/java/com/fibaya/backend/repositories/PrestataireRepository.java
 /Users/macbook/Desktop/fibaya_mina/backend/src/main/java/com/fibaya/backend/models/User.java
+/Users/macbook/Desktop/fibaya_mina/backend/src/main/java/com/fibaya/backend/controllers/PrestataireController.java
 /Users/macbook/Desktop/fibaya_mina/backend/src/main/java/com/fibaya/backend/services/AuthService.java
 /Users/macbook/Desktop/fibaya_mina/backend/src/main/java/com/fibaya/backend/repositories/ServiceRepository.java
 /Users/macbook/Desktop/fibaya_mina/backend/src/main/java/com/fibaya/backend/repositories/UserRepository.java
