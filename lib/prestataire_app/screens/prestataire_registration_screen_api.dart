@@ -4,6 +4,7 @@ import '../constants/app_theme.dart';
 import '../services/api_service.dart';
 import '../services/service_service.dart';
 import '../../common/widgets/step_progress_indicator.dart';
+import '../../common/services/phone_validation_service.dart';
 
 class PrestataireRegistrationScreenAPI extends StatefulWidget {
   const PrestataireRegistrationScreenAPI({super.key});
@@ -29,6 +30,7 @@ class _PrestataireRegistrationScreenAPIState
   String _address = '';
   String _city = '';
   String _zipCode = '';
+  String _zipCodeError = '';
   String _certifications = '';
 
   // Controllers
@@ -312,13 +314,810 @@ class _PrestataireRegistrationScreenAPIState
   // Charger les pays depuis l'API
   Future<void> _loadCountries() async {
     try {
+      print('🌐 Tentative de connexion à l\'API pour charger les pays...');
       final countries = await ApiService.getAllCountries();
+      print('✅ ${countries.length} pays chargés depuis l\'API');
       setState(() {
         _countries = countries;
       });
     } catch (e) {
-      print('Erreur lors du chargement des pays: $e');
+      print('❌ Erreur lors du chargement des pays depuis l\'API: $e');
+      print('🔄 Utilisation de la liste de pays par défaut...');
+      // Utiliser une liste de pays par défaut si l'API échoue
+      setState(() {
+        _countries = _getDefaultCountries();
+      });
     }
+  }
+
+  // Liste de pays par défaut (basée sur la table countries de la DB)
+  List<Country> _getDefaultCountries() {
+    return [
+      Country(
+        id: 1,
+        name: 'Sénégal',
+        code: '+221',
+        flag: '🇸🇳',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 2,
+        name: 'France',
+        code: '+33',
+        flag: '🇫🇷',
+        continent: 'Europe',
+        isActive: true,
+      ),
+      Country(
+        id: 3,
+        name: 'Mali',
+        code: '+223',
+        flag: '🇲🇱',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 4,
+        name: 'Burkina Faso',
+        code: '+226',
+        flag: '🇧🇫',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 5,
+        name: 'Côte d\'Ivoire',
+        code: '+225',
+        flag: '🇨🇮',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 6,
+        name: 'Guinée',
+        code: '+224',
+        flag: '🇬🇳',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 7,
+        name: 'Gambie',
+        code: '+220',
+        flag: '🇬🇲',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 8,
+        name: 'Guinée-Bissau',
+        code: '+245',
+        flag: '🇬🇼',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 9,
+        name: 'Cap-Vert',
+        code: '+238',
+        flag: '🇨🇻',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 10,
+        name: 'Mauritanie',
+        code: '+222',
+        flag: '🇲🇷',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 11,
+        name: 'Niger',
+        code: '+227',
+        flag: '🇳🇪',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 12,
+        name: 'Tchad',
+        code: '+235',
+        flag: '🇹🇩',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 13,
+        name: 'Cameroun',
+        code: '+237',
+        flag: '🇨🇲',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 14,
+        name: 'Gabon',
+        code: '+241',
+        flag: '🇬🇦',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 15,
+        name: 'Congo',
+        code: '+242',
+        flag: '🇨🇬',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 16,
+        name: 'République démocratique du Congo',
+        code: '+243',
+        flag: '🇨🇩',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 17,
+        name: 'Centrafrique',
+        code: '+236',
+        flag: '🇨🇫',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 18,
+        name: 'Togo',
+        code: '+228',
+        flag: '🇹🇬',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 19,
+        name: 'Bénin',
+        code: '+229',
+        flag: '🇧🇯',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 20,
+        name: 'Nigeria',
+        code: '+234',
+        flag: '🇳🇬',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 21,
+        name: 'Ghana',
+        code: '+233',
+        flag: '🇬🇭',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 22,
+        name: 'Liberia',
+        code: '+231',
+        flag: '🇱🇷',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 23,
+        name: 'Sierra Leone',
+        code: '+232',
+        flag: '🇸🇱',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 24,
+        name: 'États-Unis',
+        code: '+1',
+        flag: '🇺🇸',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+      Country(
+        id: 25,
+        name: 'Canada',
+        code: '+1',
+        flag: '🇨🇦',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+      Country(
+        id: 26,
+        name: 'Royaume-Uni',
+        code: '+44',
+        flag: '🇬🇧',
+        continent: 'Europe',
+        isActive: true,
+      ),
+      Country(
+        id: 27,
+        name: 'Allemagne',
+        code: '+49',
+        flag: '🇩🇪',
+        continent: 'Europe',
+        isActive: true,
+      ),
+      Country(
+        id: 28,
+        name: 'Italie',
+        code: '+39',
+        flag: '🇮🇹',
+        continent: 'Europe',
+        isActive: true,
+      ),
+      Country(
+        id: 29,
+        name: 'Espagne',
+        code: '+34',
+        flag: '🇪🇸',
+        continent: 'Europe',
+        isActive: true,
+      ),
+      Country(
+        id: 30,
+        name: 'Portugal',
+        code: '+351',
+        flag: '🇵🇹',
+        continent: 'Europe',
+        isActive: true,
+      ),
+      Country(
+        id: 31,
+        name: 'Belgique',
+        code: '+32',
+        flag: '🇧🇪',
+        continent: 'Europe',
+        isActive: true,
+      ),
+      Country(
+        id: 32,
+        name: 'Suisse',
+        code: '+41',
+        flag: '🇨🇭',
+        continent: 'Europe',
+        isActive: true,
+      ),
+      Country(
+        id: 33,
+        name: 'Maroc',
+        code: '+212',
+        flag: '🇲🇦',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 34,
+        name: 'Algérie',
+        code: '+213',
+        flag: '🇩🇿',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 35,
+        name: 'Tunisie',
+        code: '+216',
+        flag: '🇹🇳',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 36,
+        name: 'Égypte',
+        code: '+20',
+        flag: '🇪🇬',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 37,
+        name: 'Afrique du Sud',
+        code: '+27',
+        flag: '🇿🇦',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 38,
+        name: 'Kenya',
+        code: '+254',
+        flag: '🇰🇪',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 39,
+        name: 'Éthiopie',
+        code: '+251',
+        flag: '🇪🇹',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 40,
+        name: 'Ouganda',
+        code: '+256',
+        flag: '🇺🇬',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 41,
+        name: 'Tanzanie',
+        code: '+255',
+        flag: '🇹🇿',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 42,
+        name: 'Rwanda',
+        code: '+250',
+        flag: '🇷🇼',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 43,
+        name: 'Burundi',
+        code: '+257',
+        flag: '🇧🇮',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 44,
+        name: 'Madagascar',
+        code: '+261',
+        flag: '🇲🇬',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 45,
+        name: 'Maurice',
+        code: '+230',
+        flag: '🇲🇺',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 46,
+        name: 'Seychelles',
+        code: '+248',
+        flag: '🇸🇨',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 47,
+        name: 'Comores',
+        code: '+269',
+        flag: '🇰🇲',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 48,
+        name: 'Djibouti',
+        code: '+253',
+        flag: '🇩🇯',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 49,
+        name: 'Somalie',
+        code: '+252',
+        flag: '🇸🇴',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 50,
+        name: 'Soudan',
+        code: '+249',
+        flag: '🇸🇩',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 51,
+        name: 'Soudan du Sud',
+        code: '+211',
+        flag: '🇸🇸',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 52,
+        name: 'Érythrée',
+        code: '+291',
+        flag: '🇪🇷',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 53,
+        name: 'Zimbabwe',
+        code: '+263',
+        flag: '🇿🇼',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 54,
+        name: 'Zambie',
+        code: '+260',
+        flag: '🇿🇲',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 55,
+        name: 'Botswana',
+        code: '+267',
+        flag: '🇧🇼',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 56,
+        name: 'Namibie',
+        code: '+264',
+        flag: '🇳🇦',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 57,
+        name: 'Angola',
+        code: '+244',
+        flag: '🇦🇴',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 58,
+        name: 'Mozambique',
+        code: '+258',
+        flag: '🇲🇿',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 59,
+        name: 'Malawi',
+        code: '+265',
+        flag: '🇲🇼',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 60,
+        name: 'Lesotho',
+        code: '+266',
+        flag: '🇱🇸',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 61,
+        name: 'Eswatini',
+        code: '+268',
+        flag: '🇸🇿',
+        continent: 'Afrique',
+        isActive: true,
+      ),
+      Country(
+        id: 62,
+        name: 'Chine',
+        code: '+86',
+        flag: '🇨🇳',
+        continent: 'Asie',
+        isActive: true,
+      ),
+      Country(
+        id: 63,
+        name: 'Japon',
+        code: '+81',
+        flag: '🇯🇵',
+        continent: 'Asie',
+        isActive: true,
+      ),
+      Country(
+        id: 64,
+        name: 'Corée du Sud',
+        code: '+82',
+        flag: '🇰🇷',
+        continent: 'Asie',
+        isActive: true,
+      ),
+      Country(
+        id: 65,
+        name: 'Inde',
+        code: '+91',
+        flag: '🇮🇳',
+        continent: 'Asie',
+        isActive: true,
+      ),
+      Country(
+        id: 66,
+        name: 'Brésil',
+        code: '+55',
+        flag: '🇧🇷',
+        continent: 'Amérique du Sud',
+        isActive: true,
+      ),
+      Country(
+        id: 67,
+        name: 'Argentine',
+        code: '+54',
+        flag: '🇦🇷',
+        continent: 'Amérique du Sud',
+        isActive: true,
+      ),
+      Country(
+        id: 68,
+        name: 'Chili',
+        code: '+56',
+        flag: '🇨🇱',
+        continent: 'Amérique du Sud',
+        isActive: true,
+      ),
+      Country(
+        id: 69,
+        name: 'Colombie',
+        code: '+57',
+        flag: '🇨🇴',
+        continent: 'Amérique du Sud',
+        isActive: true,
+      ),
+      Country(
+        id: 70,
+        name: 'Pérou',
+        code: '+51',
+        flag: '🇵🇪',
+        continent: 'Amérique du Sud',
+        isActive: true,
+      ),
+      Country(
+        id: 71,
+        name: 'Venezuela',
+        code: '+58',
+        flag: '🇻🇪',
+        continent: 'Amérique du Sud',
+        isActive: true,
+      ),
+      Country(
+        id: 72,
+        name: 'Équateur',
+        code: '+593',
+        flag: '🇪🇨',
+        continent: 'Amérique du Sud',
+        isActive: true,
+      ),
+      Country(
+        id: 73,
+        name: 'Bolivie',
+        code: '+591',
+        flag: '🇧🇴',
+        continent: 'Amérique du Sud',
+        isActive: true,
+      ),
+      Country(
+        id: 74,
+        name: 'Paraguay',
+        code: '+595',
+        flag: '🇵🇾',
+        continent: 'Amérique du Sud',
+        isActive: true,
+      ),
+      Country(
+        id: 75,
+        name: 'Uruguay',
+        code: '+598',
+        flag: '🇺🇾',
+        continent: 'Amérique du Sud',
+        isActive: true,
+      ),
+      Country(
+        id: 76,
+        name: 'Guyane',
+        code: '+594',
+        flag: '🇬🇫',
+        continent: 'Amérique du Sud',
+        isActive: true,
+      ),
+      Country(
+        id: 77,
+        name: 'Suriname',
+        code: '+597',
+        flag: '🇸🇷',
+        continent: 'Amérique du Sud',
+        isActive: true,
+      ),
+      Country(
+        id: 78,
+        name: 'Mexique',
+        code: '+52',
+        flag: '🇲🇽',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+      Country(
+        id: 79,
+        name: 'Cuba',
+        code: '+53',
+        flag: '🇨🇺',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+      Country(
+        id: 80,
+        name: 'Jamaïque',
+        code: '+1876',
+        flag: '🇯🇲',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+      Country(
+        id: 81,
+        name: 'Haïti',
+        code: '+509',
+        flag: '🇭🇹',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+      Country(
+        id: 82,
+        name: 'République dominicaine',
+        code: '+1809',
+        flag: '🇩🇴',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+      Country(
+        id: 83,
+        name: 'Porto Rico',
+        code: '+1787',
+        flag: '🇵🇷',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+      Country(
+        id: 84,
+        name: 'Trinité-et-Tobago',
+        code: '+1868',
+        flag: '🇹🇹',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+      Country(
+        id: 85,
+        name: 'Barbade',
+        code: '+1246',
+        flag: '🇧🇧',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+      Country(
+        id: 86,
+        name: 'Grenade',
+        code: '+1473',
+        flag: '🇬🇩',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+      Country(
+        id: 87,
+        name: 'Saint-Vincent-et-les-Grenadines',
+        code: '+1784',
+        flag: '🇻🇨',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+      Country(
+        id: 88,
+        name: 'Sainte-Lucie',
+        code: '+1758',
+        flag: '🇱🇨',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+      Country(
+        id: 89,
+        name: 'Dominique',
+        code: '+1767',
+        flag: '🇩🇲',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+      Country(
+        id: 90,
+        name: 'Antigua-et-Barbuda',
+        code: '+1268',
+        flag: '🇦🇬',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+      Country(
+        id: 91,
+        name: 'Saint-Kitts-et-Nevis',
+        code: '+1869',
+        flag: '🇰🇳',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+      Country(
+        id: 92,
+        name: 'Belize',
+        code: '+501',
+        flag: '🇧🇿',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+      Country(
+        id: 93,
+        name: 'Guatemala',
+        code: '+502',
+        flag: '🇬🇹',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+      Country(
+        id: 94,
+        name: 'Honduras',
+        code: '+504',
+        flag: '🇭🇳',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+      Country(
+        id: 95,
+        name: 'Salvador',
+        code: '+503',
+        flag: '🇸🇻',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+      Country(
+        id: 96,
+        name: 'Nicaragua',
+        code: '+505',
+        flag: '🇳🇮',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+      Country(
+        id: 97,
+        name: 'Costa Rica',
+        code: '+506',
+        flag: '🇨🇷',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+      Country(
+        id: 98,
+        name: 'Panama',
+        code: '+507',
+        flag: '🇵🇦',
+        continent: 'Amérique du Nord',
+        isActive: true,
+      ),
+    ];
   }
 
   // Charger les services depuis l'API
@@ -347,17 +1146,30 @@ class _PrestataireRegistrationScreenAPIState
       return 'Le numéro de téléphone est requis';
     }
 
-    // Supprimer tous les espaces et caractères non numériques sauf +
-    String cleanPhone = phone.replaceAll(RegExp(r'[^\d+]'), '');
-
-    // Vérifier que le numéro commence par le code pays
-    if (!cleanPhone.startsWith(_selectedCountryCode)) {
-      return 'Le numéro doit commencer par $_selectedCountryCode';
+    // Utiliser le service de validation des numéros de téléphone
+    final validationResult = PhoneValidationService.validatePhoneNumber(phone, _selectedCountryCode);
+    
+    if (!validationResult.isValid) {
+      return validationResult.errorMessage ?? 'Numéro invalide';
     }
 
-    // Vérifier la longueur minimale (code pays + au moins 7 chiffres)
-    if (cleanPhone.length < _selectedCountryCode.length + 7) {
-      return 'Le numéro de téléphone est trop court';
+    return null;
+  }
+
+  // Valider le code postal
+  String? _validateZipCode(String zipCode) {
+    if (zipCode.isEmpty) {
+      return 'Le code postal est requis';
+    }
+
+    // Vérifier que le code postal ne contient que des chiffres
+    if (!RegExp(r'^\d+$').hasMatch(zipCode)) {
+      return 'Le code postal doit contenir uniquement des chiffres';
+    }
+
+    // Vérifier la longueur (entre 3 et 10 chiffres selon les pays)
+    if (zipCode.length < 3 || zipCode.length > 10) {
+      return 'Le code postal doit contenir entre 3 et 10 chiffres';
     }
 
     return null;
@@ -377,7 +1189,8 @@ class _PrestataireRegistrationScreenAPIState
             _city.isNotEmpty &&
             _zipCode.isNotEmpty &&
             _certifications.isNotEmpty &&
-            _validatePhone(_phone) == null;
+            _validatePhone(_phone) == null &&
+            _validateZipCode(_zipCode) == null;
       case 3:
         if (_selectedDocumentVersion == 'Pro') {
           return _hasProfilePhoto &&
@@ -846,7 +1659,7 @@ class _PrestataireRegistrationScreenAPIState
               const SizedBox(height: 8),
               Row(
                 children: [
-                  Expanded(
+                  Flexible(
                     flex: 2,
                     child: DropdownButtonFormField<String>(
                       value: _selectedCountryCode,
@@ -862,10 +1675,25 @@ class _PrestataireRegistrationScreenAPIState
                           ),
                         ),
                       ),
+                      // Affichage dans le menu fermé : Drapeau + Code
+                      selectedItemBuilder: (BuildContext context) {
+                        return _countries.map<Widget>((country) {
+                          return Text(
+                            '${country.flag} ${country.code}',
+                            style: const TextStyle(fontSize: 14),
+                            overflow: TextOverflow.ellipsis,
+                          );
+                        }).toList();
+                      },
+                      // Affichage dans le menu ouvert : Drapeau + Nom
                       items: _countries.map((country) {
                         return DropdownMenuItem(
                           value: country.code,
-                          child: Text('${country.flag} ${country.code}'),
+                          child: Text(
+                            '${country.flag} ${country.name}',
+                            style: const TextStyle(fontSize: 16),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         );
                       }).toList(),
                       onChanged: (value) {
@@ -967,11 +1795,12 @@ class _PrestataireRegistrationScreenAPIState
               const SizedBox(height: 8),
               TextField(
                 controller: _zipCodeController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(12)),
                   ),
-                  focusedBorder: OutlineInputBorder(
+                  focusedBorder: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(12)),
                     borderSide: BorderSide(
                       color: AppTheme.primaryGreen,
@@ -979,10 +1808,12 @@ class _PrestataireRegistrationScreenAPIState
                     ),
                   ),
                   hintText: 'Code postal',
+                  errorText: _zipCodeError.isNotEmpty ? _zipCodeError : null,
                 ),
                 onChanged: (value) {
                   setState(() {
                     _zipCode = value;
+                    _zipCodeError = _validateZipCode(value) ?? '';
                   });
                 },
               ),

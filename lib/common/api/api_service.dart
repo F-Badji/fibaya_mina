@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = 'http://localhost:8080/api';
+  static const String baseUrl = 'http://192.168.1.28:8080/api';
 
   // Headers par défaut
   static Map<String, String> get defaultHeaders => {
@@ -88,4 +88,3 @@ class ApiService {
     }
   }
 }
-
