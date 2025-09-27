@@ -17,10 +17,9 @@ class ApiService {
       print('🌐 Tentative de connexion à: $baseUrl/countries');
       print('📡 Headers: $headers');
 
-      final response = await http.get(
-        Uri.parse('$baseUrl/countries'),
-        headers: headers,
-      ).timeout(const Duration(seconds: 5));
+      final response = await http
+          .get(Uri.parse('$baseUrl/countries'), headers: headers)
+          .timeout(const Duration(seconds: 15));
 
       print('📊 Status Code: ${response.statusCode}');
       print('📄 Response Headers: ${response.headers}');

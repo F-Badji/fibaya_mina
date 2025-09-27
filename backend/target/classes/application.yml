@@ -32,9 +32,11 @@ spring:
   # Configuration CORS pour permettre les requêtes depuis Flutter
   web:
     cors:
-      allowed-origins: "*"
-      allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
+      allowed-origin-patterns: "*"
+      allowed-methods: "GET,POST,PUT,DELETE,OPTIONS,PATCH"
       allowed-headers: "*"
+      allow-credentials: false
+      max-age: 3600
 
 # Configuration des logs
 logging:

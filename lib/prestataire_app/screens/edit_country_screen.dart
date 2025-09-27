@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../common/services/phone_country_service.dart';
 
 // Couleur personnalisée Fibaya
 const Color fibayaGreen = Color(0xFF065b32);
@@ -298,13 +299,56 @@ class _EditCountryScreenState extends State<EditCountryScreen> {
   }
 
   void _saveCountry() {
+    final countryCode = PhoneCountryService.getCountryCode(_selectedCountry);
+    final phoneFormat = PhoneCountryService.getPhoneFormat(_selectedCountry);
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Colors.white,
         title: const Text('Succès'),
-        content: Text(
-          'Votre pays du compte a été modifié en $_selectedCountry',
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Votre pays du compte a été modifié en $_selectedCountry'),
+            const SizedBox(height: 12),
+            if (countryCode != null && phoneFormat != null) ...[
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.blue[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.blue[200]!),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Format téléphone pour $_selectedCountry:',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue[800],
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Code: $countryCode',
+                      style: TextStyle(color: Colors.blue[700]),
+                    ),
+                    Text(
+                      'Longueur: ${phoneFormat.totalDigits} chiffres',
+                      style: TextStyle(color: Colors.blue[700]),
+                    ),
+                    Text(
+                      'Exemple: ${phoneFormat.example}',
+                      style: TextStyle(color: Colors.blue[700]),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
         ),
         actions: [
           TextButton(
