@@ -13,6 +13,9 @@ public class AuthService {
     @Autowired
     private UserRepository userRepository;
     
+    @Autowired
+    private PhoneValidationService phoneValidationService;
+    
     public Map<String, Object> checkUserExists(String phone) {
         Map<String, Object> response = new HashMap<>();
         boolean exists = userRepository.existsByPhone(phone);
@@ -44,6 +47,13 @@ public class AuthService {
     }
     
     public User registerUser(String phone, String countryCode, String firstName, String lastName) {
+        // Valider le numéro de téléphone avant l'enregistrement
+        Map<String, Object> validationResult = phoneValidationService.validatePhoneNumberByCode(phone, countryCode);
+        
+        if (!(Boolean) validationResult.get("valid")) {
+            throw new IllegalArgumentException("Numéro de téléphone invalide: " + validationResult.get("message"));
+        }
+        
         User user = new User();
         user.setPhone(phone);
         user.setCountryCode(countryCode);

@@ -39,3 +39,4 @@ echo "- Backend URL: http://localhost:8080/api"
 echo "- Port forwarding: 8080 -> 8080"
 echo "- Configuration dans: lib/common/config.dart"
 
+

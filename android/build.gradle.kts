@@ -3,6 +3,12 @@ allprojects {
         google()
         mavenCentral()
     }
+    
+    // Configuration Java globale
+    tasks.withType<JavaCompile> {
+        sourceCompatibility = JavaVersion.VERSION_17.toString()
+        targetCompatibility = JavaVersion.VERSION_17.toString()
+    }
 }
 
 val newBuildDir: Directory = rootProject.layout.buildDirectory.dir("../../build").get()

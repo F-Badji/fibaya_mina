@@ -6,7 +6,7 @@ class AppConfig {
 
   /// URL de base de l'API backend
   /// Pour l'émulateur Android, utilisez localhost avec port forwarding
-  static const String baseApiUrl = 'http://192.168.1.28:8080/api';
+  static const String baseApiUrl = 'http://10.0.2.2:8081/api';
 
   /// Pour basculer facilement :
   /// - Développement : isDevelopmentMode = true

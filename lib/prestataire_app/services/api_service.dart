@@ -20,7 +20,7 @@ class ApiService {
       final response = await http.get(
         Uri.parse('$baseUrl/countries'),
         headers: headers,
-      );
+      ).timeout(const Duration(seconds: 5));
 
       print('📊 Status Code: ${response.statusCode}');
       print('📄 Response Headers: ${response.headers}');

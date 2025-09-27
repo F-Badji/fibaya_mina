@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = 'http://192.168.1.28:8080/api';
+  static const String baseUrl = 'http://10.0.2.2:8081/api';
 
   // Headers par défaut
   static Map<String, String> get defaultHeaders => {
@@ -16,7 +16,7 @@ class ApiService {
       final response = await http.get(
         Uri.parse('$baseUrl$endpoint'),
         headers: defaultHeaders,
-      );
+      ).timeout(const Duration(seconds: 5));
 
       if (response.statusCode == 200) {
         return json.decode(response.body);

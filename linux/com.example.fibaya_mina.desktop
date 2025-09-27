@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Fibaya Mina
+Comment=Fibaya Mina Application
+Exec=./fibaya_mina
+Icon=com.example.fibaya_mina
+Terminal=false
+Type=Application
+Categories=Utility;
+MimeType=application/pdf;image/*;text/*;

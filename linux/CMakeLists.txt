@@ -54,6 +54,9 @@ add_subdirectory(${FLUTTER_MANAGED_DIR})
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK REQUIRED IMPORTED_TARGET gtk+-3.0)
 
+# File picker dependencies
+pkg_check_modules(GTK_FILE_CHOOSER REQUIRED IMPORTED_TARGET gtk+-3.0)
+
 # Application build; see runner/CMakeLists.txt.
 add_subdirectory("runner")
 
