@@ -5,9 +5,17 @@ import com.fibaya.backend.services.PrestataireService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/prestataires")
@@ -77,11 +85,105 @@ public class PrestataireController {
     @PostMapping
     public ResponseEntity<Prestataire> createPrestataire(@RequestBody Prestataire prestataire) {
         try {
+            // Vérifier si le numéro de téléphone existe déjà
+            if (prestataireService.existsByTelephone(prestataire.getTelephone())) {
+                return ResponseEntity.badRequest().build();
+            }
+            
             Prestataire newPrestataire = prestataireService.createPrestataire(prestataire);
             return ResponseEntity.ok(newPrestataire);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    // Créer un nouveau prestataire avec fichiers
+    @PostMapping("/with-files")
+    public ResponseEntity<Prestataire> createPrestataireWithFiles(
+            @RequestParam("nom") String nom,
+            @RequestParam("prenom") String prenom,
+            @RequestParam("telephone") String telephone,
+            @RequestParam("serviceType") String serviceType,
+            @RequestParam("typeService") String typeService,
+            @RequestParam("experience") String experience,
+            @RequestParam("description") String description,
+            @RequestParam(value = "adresse", required = false) String adresse,
+            @RequestParam(value = "ville", required = false) String ville,
+            @RequestParam(value = "codePostal", required = false) String codePostal,
+            @RequestParam(value = "certifications", required = false) String certifications,
+            @RequestParam(value = "versionDocument", required = false) String versionDocument,
+            @RequestParam(value = "imageProfil", required = false) MultipartFile imageProfil,
+            @RequestParam(value = "carteIdentiteRecto", required = false) MultipartFile carteIdentiteRecto,
+            @RequestParam(value = "carteIdentiteVerso", required = false) MultipartFile carteIdentiteVerso,
+            @RequestParam(value = "cv", required = false) MultipartFile cv,
+            @RequestParam(value = "diplome", required = false) MultipartFile diplome) {
+        try {
+            // Vérifier si le numéro de téléphone existe déjà
+            if (prestataireService.existsByTelephone(telephone)) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            // Créer le dossier uploads s'il n'existe pas
+            File uploadDir = new File("uploads");
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
+            }
+
+            // Créer le prestataire
+            Prestataire prestataire = new Prestataire();
+            prestataire.setNom(nom);
+            prestataire.setPrenom(prenom);
+            prestataire.setTelephone(telephone);
+            prestataire.setServiceType(serviceType);
+            prestataire.setTypeService(typeService);
+            prestataire.setExperience(experience);
+            prestataire.setDescription(description);
+            prestataire.setAdresse(adresse);
+            prestataire.setVille(ville);
+            prestataire.setCodePostal(codePostal);
+            prestataire.setCertifications(certifications);
+            prestataire.setVersionDocument(versionDocument != null ? versionDocument : "Pro");
+
+            // Traiter les fichiers
+            if (imageProfil != null && !imageProfil.isEmpty()) {
+                String fileName = saveFile(imageProfil);
+                prestataire.setImageProfil(fileName);
+            }
+            if (carteIdentiteRecto != null && !carteIdentiteRecto.isEmpty()) {
+                String fileName = saveFile(carteIdentiteRecto);
+                prestataire.setCarteIdentiteRecto(fileName);
+            }
+            if (carteIdentiteVerso != null && !carteIdentiteVerso.isEmpty()) {
+                String fileName = saveFile(carteIdentiteVerso);
+                prestataire.setCarteIdentiteVerso(fileName);
+            }
+            if (cv != null && !cv.isEmpty()) {
+                String fileName = saveFile(cv);
+                prestataire.setCv(fileName);
+            }
+            if (diplome != null && !diplome.isEmpty()) {
+                String fileName = saveFile(diplome);
+                prestataire.setDiplome(fileName);
+            }
+
+            Prestataire newPrestataire = prestataireService.createPrestataire(prestataire);
+            return ResponseEntity.ok(newPrestataire);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    private String saveFile(MultipartFile file) throws IOException {
+        String originalFileName = file.getOriginalFilename();
+        String fileExtension = "";
+        if (originalFileName != null && originalFileName.contains(".")) {
+            fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
+        }
+        String fileName = UUID.randomUUID().toString() + fileExtension;
+        Path targetLocation = Paths.get("uploads/" + fileName);
+        Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+        return fileName;
     }
 
     // Mettre à jour un prestataire

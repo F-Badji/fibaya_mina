@@ -28,34 +28,19 @@ public class Prestataire {
     private String telephone;
     
     @Column
-    private String email;
-    
-    @Column
     private String adresse;
     
     @Column
-    private Double latitude;
+    private String ville;
     
     @Column
-    private Double longitude;
+    private String codePostal;
     
     @Column(nullable = false)
     private String serviceType;
     
-    @Column(precision = 3, scale = 2)
-    private BigDecimal rating = BigDecimal.ZERO;
-    
-    @Column
-    private Integer nombreEvaluations = 0;
-    
-    @Column
-    private String prixParHeure;
-    
     @Column
     private String experience;
-    
-    @Column
-    private Integer jobsCompletes = 0;
     
     @Column(nullable = false)
     private String statut = "DISPONIBLE";
@@ -65,6 +50,24 @@ public class Prestataire {
     
     @Column(columnDefinition = "TEXT")
     private String description;
+    
+    @Column(columnDefinition = "TEXT")
+    private String certifications;
+    
+    @Column
+    private String versionDocument = "Pro";
+    
+    @Column
+    private String carteIdentiteRecto;
+    
+    @Column
+    private String carteIdentiteVerso;
+    
+    @Column
+    private String cv;
+    
+    @Column
+    private String diplome;
     
     @Column
     private String imageProfil;

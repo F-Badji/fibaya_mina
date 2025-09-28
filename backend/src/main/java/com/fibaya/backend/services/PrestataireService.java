@@ -27,6 +27,11 @@ public class PrestataireService {
         return prestataireRepository.findById(id);
     }
 
+    // Vérifier si un numéro de téléphone existe déjà
+    public boolean existsByTelephone(String telephone) {
+        return prestataireRepository.existsByTelephone(telephone);
+    }
+
     // Rechercher des prestataires par nom, prénom ou service
     public List<Prestataire> searchPrestataires(String query) {
         String searchQuery = "%" + query.toLowerCase() + "%";
@@ -64,19 +69,20 @@ public class PrestataireService {
             prestataire.setNom(prestataireDetails.getNom());
             prestataire.setPrenom(prestataireDetails.getPrenom());
             prestataire.setTelephone(prestataireDetails.getTelephone());
-            prestataire.setEmail(prestataireDetails.getEmail());
             prestataire.setAdresse(prestataireDetails.getAdresse());
-            prestataire.setLatitude(prestataireDetails.getLatitude());
-            prestataire.setLongitude(prestataireDetails.getLongitude());
+            prestataire.setVille(prestataireDetails.getVille());
+            prestataire.setCodePostal(prestataireDetails.getCodePostal());
             prestataire.setServiceType(prestataireDetails.getServiceType());
-            prestataire.setRating(prestataireDetails.getRating());
-            prestataire.setNombreEvaluations(prestataireDetails.getNombreEvaluations());
-            prestataire.setPrixParHeure(prestataireDetails.getPrixParHeure());
             prestataire.setExperience(prestataireDetails.getExperience());
-            prestataire.setJobsCompletes(prestataireDetails.getJobsCompletes());
             prestataire.setStatut(prestataireDetails.getStatut());
             prestataire.setTypeService(prestataireDetails.getTypeService());
             prestataire.setDescription(prestataireDetails.getDescription());
+            prestataire.setCertifications(prestataireDetails.getCertifications());
+            prestataire.setVersionDocument(prestataireDetails.getVersionDocument());
+            prestataire.setCarteIdentiteRecto(prestataireDetails.getCarteIdentiteRecto());
+            prestataire.setCarteIdentiteVerso(prestataireDetails.getCarteIdentiteVerso());
+            prestataire.setCv(prestataireDetails.getCv());
+            prestataire.setDiplome(prestataireDetails.getDiplome());
             prestataire.setImageProfil(prestataireDetails.getImageProfil());
             prestataire.setDateModification(LocalDateTime.now());
             
@@ -106,13 +112,6 @@ public class PrestataireService {
         statistiques.put("prestatairesHorsLigne", 
             allPrestataires.stream().filter(p -> "HORS_LIGNE".equals(p.getStatut())).count());
         
-        // Note moyenne
-        double noteMoyenne = allPrestataires.stream()
-            .mapToDouble(p -> p.getRating().doubleValue())
-            .average()
-            .orElse(0.0);
-        statistiques.put("noteMoyenne", noteMoyenne);
-        
         // Répartition par type de service
         Map<String, Long> repartitionTypeService = new HashMap<>();
         repartitionTypeService.put("A_DOMICILE", 
@@ -122,6 +121,14 @@ public class PrestataireService {
         repartitionTypeService.put("LES_DEUX", 
             allPrestataires.stream().filter(p -> "LES_DEUX".equals(p.getTypeService())).count());
         statistiques.put("repartitionTypeService", repartitionTypeService);
+        
+        // Répartition par version de document
+        Map<String, Long> repartitionVersion = new HashMap<>();
+        repartitionVersion.put("Pro", 
+            allPrestataires.stream().filter(p -> "Pro".equals(p.getVersionDocument())).count());
+        repartitionVersion.put("Simple", 
+            allPrestataires.stream().filter(p -> "Simple".equals(p.getVersionDocument())).count());
+        statistiques.put("repartitionVersion", repartitionVersion);
         
         return statistiques;
     }

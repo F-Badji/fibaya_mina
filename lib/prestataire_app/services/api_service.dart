@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:file_picker/file_picker.dart';
 import '../../common/config.dart';
 
 class ApiService {
@@ -158,6 +160,207 @@ class ApiService {
     } catch (e) {
       print('Erreur getUserInfo: $e');
       return null;
+    }
+  }
+
+  // Enregistrer un nouveau prestataire
+  static Future<bool> registerPrestataire({
+    required String nom,
+    required String prenom,
+    required String telephone,
+    required String serviceType,
+    required String typeService,
+    required String experience,
+    required String description,
+    String? adresse,
+    String? ville,
+    String? codePostal,
+    String? certifications,
+    String? versionDocument,
+    String? carteIdentiteRecto,
+    String? carteIdentiteVerso,
+    String? cv,
+    String? diplome,
+    String? imageProfil,
+  }) async {
+    try {
+      print('🌐 Tentative de connexion à: $baseUrl/prestataires');
+      print('📤 Données prestataire envoyées:');
+      print('  - nom: $nom');
+      print('  - prenom: $prenom');
+      print('  - telephone: $telephone');
+      print('  - serviceType: $serviceType');
+      print('  - typeService: $typeService');
+      print('  - experience: $experience');
+      print('  - description: $description');
+      print('  - carteIdentiteRecto: $carteIdentiteRecto');
+      print('  - carteIdentiteVerso: $carteIdentiteVerso');
+      print('  - cv: $cv');
+      print('  - diplome: $diplome');
+      print('  - imageProfil: $imageProfil');
+
+      final response = await http.post(
+        Uri.parse('$baseUrl/prestataires'),
+        headers: headers,
+        body: json.encode({
+          'nom': nom,
+          'prenom': prenom,
+          'telephone': telephone,
+          'serviceType': serviceType,
+          'typeService': typeService,
+          'experience': experience,
+          'description': description,
+          if (adresse != null) 'adresse': adresse,
+          if (ville != null) 'ville': ville,
+          if (codePostal != null) 'codePostal': codePostal,
+          if (certifications != null) 'certifications': certifications,
+          if (versionDocument != null) 'versionDocument': versionDocument,
+          if (carteIdentiteRecto != null)
+            'carteIdentiteRecto': carteIdentiteRecto,
+          if (carteIdentiteVerso != null)
+            'carteIdentiteVerso': carteIdentiteVerso,
+          if (cv != null) 'cv': cv,
+          if (diplome != null) 'diplome': diplome,
+          if (imageProfil != null) 'imageProfil': imageProfil,
+        }),
+      );
+
+      print('📊 Response status: ${response.statusCode}');
+      print('📄 Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        print('✅ Prestataire enregistré avec succès dans la base de données!');
+        return true;
+      } else {
+        print(
+          '❌ Erreur enregistrement prestataire: ${response.statusCode} - ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      print('❌ Erreur registerPrestataire: $e');
+      return false;
+    }
+  }
+
+  // Enregistrer un nouveau prestataire avec fichiers
+  static Future<Map<String, dynamic>> registerPrestataireWithFiles({
+    required String nom,
+    required String prenom,
+    required String telephone,
+    required String serviceType,
+    required String typeService,
+    required String experience,
+    required String description,
+    String? adresse,
+    String? ville,
+    String? codePostal,
+    String? certifications,
+    String? versionDocument,
+    PlatformFile? imageProfil,
+    PlatformFile? carteIdentiteRecto,
+    PlatformFile? carteIdentiteVerso,
+    PlatformFile? cv,
+    PlatformFile? diplome,
+  }) async {
+    try {
+      print('🌐 Tentative de connexion à: $baseUrl/prestataires/with-files');
+      print('📤 Envoi des données prestataire avec fichiers...');
+
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('$baseUrl/prestataires/with-files'),
+      );
+
+      // Ajouter les champs texte
+      request.fields['nom'] = nom;
+      request.fields['prenom'] = prenom;
+      request.fields['telephone'] = telephone;
+      request.fields['serviceType'] = serviceType;
+      request.fields['typeService'] = typeService;
+      request.fields['experience'] = experience;
+      request.fields['description'] = description;
+      if (adresse != null) request.fields['adresse'] = adresse;
+      if (ville != null) request.fields['ville'] = ville;
+      if (codePostal != null) request.fields['codePostal'] = codePostal;
+      if (certifications != null)
+        request.fields['certifications'] = certifications;
+      if (versionDocument != null)
+        request.fields['versionDocument'] = versionDocument;
+
+      // Ajouter les fichiers
+      if (imageProfil != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'imageProfil',
+            imageProfil.path!,
+            filename: imageProfil.name,
+          ),
+        );
+      }
+      if (carteIdentiteRecto != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'carteIdentiteRecto',
+            carteIdentiteRecto.path!,
+            filename: carteIdentiteRecto.name,
+          ),
+        );
+      }
+      if (carteIdentiteVerso != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'carteIdentiteVerso',
+            carteIdentiteVerso.path!,
+            filename: carteIdentiteVerso.name,
+          ),
+        );
+      }
+      if (cv != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath('cv', cv.path!, filename: cv.name),
+        );
+      }
+      if (diplome != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'diplome',
+            diplome.path!,
+            filename: diplome.name,
+          ),
+        );
+      }
+
+      var response = await request.send();
+      var responseBody = await response.stream.bytesToString();
+
+      print('📊 Response status: ${response.statusCode}');
+      print('📄 Response body: $responseBody');
+
+      if (response.statusCode == 200) {
+        print('✅ Prestataire enregistré avec succès avec fichiers!');
+        return {
+          'success': true,
+          'message': 'Prestataire enregistré avec succès',
+        };
+      } else if (response.statusCode == 400) {
+        print('❌ Erreur: Ce numéro de téléphone existe déjà!');
+        return {
+          'success': false,
+          'message': 'Ce numéro de téléphone existe déjà',
+        };
+      } else {
+        print(
+          '❌ Erreur enregistrement prestataire: ${response.statusCode} - $responseBody',
+        );
+        return {
+          'success': false,
+          'message': 'Erreur lors de l\'enregistrement',
+        };
+      }
+    } catch (e) {
+      print('❌ Erreur registerPrestataireWithFiles: $e');
+      return {'success': false, 'message': 'Erreur de connexion'};
     }
   }
 }

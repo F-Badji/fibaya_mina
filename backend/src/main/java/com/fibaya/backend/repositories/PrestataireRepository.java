@@ -35,32 +35,9 @@ public interface PrestataireRepository extends JpaRepository<Prestataire, Long> 
     // Trouver par téléphone
     Optional<Prestataire> findByTelephone(String telephone);
 
-    // Trouver par email
-    Optional<Prestataire> findByEmail(String email);
+    // Vérifier si un numéro de téléphone existe
+    boolean existsByTelephone(String telephone);
 
-    // Trouver les prestataires disponibles dans une zone géographique
-    @Query("SELECT p FROM Prestataire p WHERE " +
-           "p.statut = 'DISPONIBLE' AND " +
-           "6371 * acos(cos(radians(:latitude)) * cos(radians(p.latitude)) * " +
-           "cos(radians(p.longitude) - radians(:longitude)) + " +
-           "sin(radians(:latitude)) * sin(radians(p.latitude))) <= :radius")
-    List<Prestataire> findPrestatairesDisponiblesDansZone(
-            @Param("latitude") double latitude,
-            @Param("longitude") double longitude,
-            @Param("radius") double radius);
-
-    // Trouver les prestataires par service et zone géographique
-    @Query("SELECT p FROM Prestataire p WHERE " +
-           "p.statut = 'DISPONIBLE' AND " +
-           "LOWER(p.serviceType) LIKE LOWER(CONCAT('%', :serviceType, '%')) AND " +
-           "6371 * acos(cos(radians(:latitude)) * cos(radians(p.latitude)) * " +
-           "cos(radians(p.longitude) - radians(:longitude)) + " +
-           "sin(radians(:latitude)) * sin(radians(p.latitude))) <= :radius")
-    List<Prestataire> findPrestatairesDisponiblesParServiceDansZone(
-            @Param("serviceType") String serviceType,
-            @Param("latitude") double latitude,
-            @Param("longitude") double longitude,
-            @Param("radius") double radius);
 
     // Compter les prestataires par statut
     long countByStatut(String statut);

@@ -132,10 +132,16 @@ class _PrestataireRegistrationScreenAPIState
   }
 
   // Méthode UNIQUE pour sélectionner un fichier - avec verrou global
-  Future<void> _pickFile(String documentType, {List<String>? allowedExtensions, int? maxSizeMB}) async {
+  Future<void> _pickFile(
+    String documentType, {
+    List<String>? allowedExtensions,
+    int? maxSizeMB,
+  }) async {
     // Verrou global IMMÉDIAT - avant toute autre instruction
     if (_isFilePickerActive) {
-      print('⏳ DEBUG: File picker déjà actif, action ignorée pour $documentType.');
+      print(
+        '⏳ DEBUG: File picker déjà actif, action ignorée pour $documentType.',
+      );
       return;
     }
 
@@ -158,18 +164,21 @@ class _PrestataireRegistrationScreenAPIState
         return;
       }
 
-      print('🔍 DEBUG: Lancement de FilePicker.platform.pickFiles pour $documentType');
+      print(
+        '🔍 DEBUG: Lancement de FilePicker.platform.pickFiles pour $documentType',
+      );
 
       // Déterminer le type de fichier selon le document
       FilePickerResult? result;
-      
+
       // Utiliser les extensions fournies en paramètre ou déterminer automatiquement
       List<String> extensions = allowedExtensions ?? [];
       int maxSize = maxSizeMB ?? 5;
-      
+
       if (extensions.isEmpty) {
         // Déterminer automatiquement selon le type de document
-        if (documentType.contains('Photo') || documentType.contains('Pièce d\'identité')) {
+        if (documentType.contains('Photo') ||
+            documentType.contains('Pièce d\'identité')) {
           extensions = ['jpg', 'jpeg', 'png'];
           maxSize = 5;
         } else if (documentType.contains('Diplôme')) {
@@ -180,15 +189,19 @@ class _PrestataireRegistrationScreenAPIState
           maxSize = 10;
         }
       }
-      
+
       // Si le diplôme a plusieurs extensions, proposer le choix
-      print('🔍 DEBUG: Vérification condition diplôme - documentType: $documentType, extensions: $extensions');
-      if (documentType.contains('Diplôme') && 
-          (extensions.contains('jpg') || extensions.contains('jpeg') || extensions.contains('png')) && 
+      print(
+        '🔍 DEBUG: Vérification condition diplôme - documentType: $documentType, extensions: $extensions',
+      );
+      if (documentType.contains('Diplôme') &&
+          (extensions.contains('jpg') ||
+              extensions.contains('jpeg') ||
+              extensions.contains('png')) &&
           extensions.contains('pdf')) {
         print('✅ DEBUG: Affichage du dialogue de choix pour le diplôme');
-      _showFileSourceDialog(
-        documentType: documentType,
+        _showFileSourceDialog(
+          documentType: documentType,
           allowedExtensions: extensions,
           maxSizeMB: maxSize,
           onFileSelected: (selectedFile) {
@@ -206,16 +219,16 @@ class _PrestataireRegistrationScreenAPIState
         );
         return; // Sortir de la méthode car le dialogue gère la sélection
       }
-      
+
       // Sélection directe selon les extensions
-      if (extensions.any((ext) => ['jpg', 'jpeg', 'png'].contains(ext)) && 
+      if (extensions.any((ext) => ['jpg', 'jpeg', 'png'].contains(ext)) &&
           !extensions.any((ext) => ['pdf'].contains(ext))) {
         // Images uniquement
         result = await FilePicker.platform.pickFiles(
           type: FileType.image,
           allowMultiple: false,
-      );
-    } else {
+        );
+      } else {
         // Fichiers personnalisés
         result = await FilePicker.platform.pickFiles(
           type: FileType.custom,
@@ -226,8 +239,10 @@ class _PrestataireRegistrationScreenAPIState
 
       if (result != null && result.files.isNotEmpty) {
         PlatformFile file = result.files.first;
-        print('📁 DEBUG: Fichier sélectionné pour $documentType : ${file.name}');
-        
+        print(
+          '📁 DEBUG: Fichier sélectionné pour $documentType : ${file.name}',
+        );
+
         // Traiter le fichier sélectionné
         await _processSelectedFile(file, documentType, extensions, maxSize);
       } else {
@@ -252,14 +267,18 @@ class _PrestataireRegistrationScreenAPIState
   }
 
   // Traiter le fichier sélectionné
-  Future<void> _processSelectedFile(PlatformFile file, String documentType, List<String> allowedExtensions, int maxSizeMB) async {
-
+  Future<void> _processSelectedFile(
+    PlatformFile file,
+    String documentType,
+    List<String> allowedExtensions,
+    int maxSizeMB,
+  ) async {
     // Valider et assigner le fichier
     await _validateAndAssignFile(
       file: file,
-        documentType: documentType,
-        allowedExtensions: allowedExtensions,
-        maxSizeMB: maxSizeMB,
+      documentType: documentType,
+      allowedExtensions: allowedExtensions,
+      maxSizeMB: maxSizeMB,
       onFileSelected: (selectedFile) {
         // Mettre à jour l'état selon le type de document et la version sélectionnée
         setState(() {
@@ -267,10 +286,12 @@ class _PrestataireRegistrationScreenAPIState
             if (documentType.contains('Photo de profil')) {
               _profilePhotoFile = selectedFile;
               _hasProfilePhoto = selectedFile != null;
-            } else if (documentType.contains('Pièce d\'identité') && documentType.contains('recto')) {
+            } else if (documentType.contains('Pièce d\'identité') &&
+                documentType.contains('recto')) {
               _idCardFrontFile = selectedFile;
               _hasIdCardFront = selectedFile != null;
-            } else if (documentType.contains('Pièce d\'identité') && documentType.contains('verso')) {
+            } else if (documentType.contains('Pièce d\'identité') &&
+                documentType.contains('verso')) {
               _idCardBackFile = selectedFile;
               _hasIdCardBack = selectedFile != null;
             } else if (documentType.contains('Diplôme')) {
@@ -285,10 +306,12 @@ class _PrestataireRegistrationScreenAPIState
             if (documentType.contains('Photo de profil')) {
               _profilePhotoSimpleFile = selectedFile;
               _hasProfilePhotoSimple = selectedFile != null;
-            } else if (documentType.contains('Pièce d\'identité') && documentType.contains('recto')) {
+            } else if (documentType.contains('Pièce d\'identité') &&
+                documentType.contains('recto')) {
               _idCardFrontSimpleFile = selectedFile;
               _hasIdCardFrontSimple = selectedFile != null;
-            } else if (documentType.contains('Pièce d\'identité') && documentType.contains('verso')) {
+            } else if (documentType.contains('Pièce d\'identité') &&
+                documentType.contains('verso')) {
               _idCardBackSimpleFile = selectedFile;
               _hasIdCardBackSimple = selectedFile != null;
             }
@@ -323,7 +346,11 @@ class _PrestataireRegistrationScreenAPIState
                 print('📸 DEBUG: Sélection Galerie pour $documentType');
                 Navigator.pop(context);
                 // Sélectionner uniquement les images depuis la galerie
-                _pickFile(documentType, allowedExtensions: ['jpg', 'jpeg', 'png'], maxSizeMB: maxSizeMB);
+                _pickFile(
+                  documentType,
+                  allowedExtensions: ['jpg', 'jpeg', 'png'],
+                  maxSizeMB: maxSizeMB,
+                );
               },
             ),
             ListTile(
@@ -333,7 +360,11 @@ class _PrestataireRegistrationScreenAPIState
                 print('📁 DEBUG: Sélection Fichiers pour $documentType');
                 Navigator.pop(context);
                 // Sélectionner uniquement les PDF depuis les fichiers
-                _pickFile(documentType, allowedExtensions: ['pdf'], maxSizeMB: maxSizeMB);
+                _pickFile(
+                  documentType,
+                  allowedExtensions: ['pdf'],
+                  maxSizeMB: maxSizeMB,
+                );
               },
             ),
           ],
@@ -341,7 +372,6 @@ class _PrestataireRegistrationScreenAPIState
       ),
     );
   }
-
 
   // Valider et assigner un fichier
   Future<void> _validateAndAssignFile({
@@ -533,18 +563,18 @@ class _PrestataireRegistrationScreenAPIState
       );
       print('✅ ${countries.length} pays chargés depuis l\'API');
       if (mounted) {
-      setState(() {
-        _countries = countries;
-      });
+        setState(() {
+          _countries = countries;
+        });
       }
     } catch (e) {
       print('❌ Erreur lors du chargement des pays depuis l\'API: $e');
       print('🔄 Utilisation de la liste de pays par défaut...');
       // Utiliser une liste de pays par défaut si l'API échoue
       if (mounted) {
-      setState(() {
-        _countries = _getDefaultCountries();
-      });
+        setState(() {
+          _countries = _getDefaultCountries();
+        });
       }
     }
   }
@@ -2174,9 +2204,9 @@ class _PrestataireRegistrationScreenAPIState
   // Charger les services depuis l'API
   Future<void> _loadServices() async {
     if (mounted) {
-    setState(() {
-      _isLoadingServices = true;
-    });
+      setState(() {
+        _isLoadingServices = true;
+      });
     }
 
     try {
@@ -2191,17 +2221,17 @@ class _PrestataireRegistrationScreenAPIState
         },
       );
       if (mounted) {
-      setState(() {
-        _services = services;
-        _isLoadingServices = false;
-      });
+        setState(() {
+          _services = services;
+          _isLoadingServices = false;
+        });
       }
     } catch (e) {
       print('Erreur API getAllServices: $e');
       if (mounted) {
-      setState(() {
-        _isLoadingServices = false;
-      });
+        setState(() {
+          _isLoadingServices = false;
+        });
       }
     }
   }
@@ -2243,20 +2273,32 @@ class _PrestataireRegistrationScreenAPIState
   // Vérifier si les deux versions ont des données (sécurité)
   bool _hasBothVersionsData() {
     // Vérifier si la version Pro a des données
-    bool hasProData = _hasProfilePhoto || _hasIdCardFront || _hasIdCardBack || _hasDiploma || _hasCv;
-    
+    bool hasProData =
+        _hasProfilePhoto ||
+        _hasIdCardFront ||
+        _hasIdCardBack ||
+        _hasDiploma ||
+        _hasCv;
+
     // Vérifier si la version Simple a des données
-    bool hasSimpleData = _hasProfilePhotoSimple || _hasIdCardFrontSimple || _hasIdCardBackSimple;
-    
+    bool hasSimpleData =
+        _hasProfilePhotoSimple || _hasIdCardFrontSimple || _hasIdCardBackSimple;
+
     return hasProData && hasSimpleData;
   }
 
   // Vérifier si une version a des données complètes
   bool _hasCompleteVersionData() {
     if (_selectedDocumentVersion == 'Pro') {
-      return _hasProfilePhoto && _hasIdCardFront && _hasIdCardBack && _hasDiploma && _hasCv;
+      return _hasProfilePhoto &&
+          _hasIdCardFront &&
+          _hasIdCardBack &&
+          _hasDiploma &&
+          _hasCv;
     } else {
-      return _hasProfilePhotoSimple && _hasIdCardFrontSimple && _hasIdCardBackSimple;
+      return _hasProfilePhotoSimple &&
+          _hasIdCardFrontSimple &&
+          _hasIdCardBackSimple;
     }
   }
 
@@ -2288,7 +2330,7 @@ class _PrestataireRegistrationScreenAPIState
   }
 
   // Soumettre l'application avec vérification de sécurité
-  void _submitApplication() {
+  Future<void> _submitApplication() async {
     // Vérification de sécurité : empêcher la soumission si les deux versions ont des données
     if (_hasBothVersionsData()) {
       _showErrorDialog(
@@ -2307,19 +2349,144 @@ class _PrestataireRegistrationScreenAPIState
       return;
     }
 
-    // Afficher un message de confirmation
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Votre candidature $_selectedDocumentVersion a été soumise avec succès ! Vous recevrez une confirmation sous 24-48h.',
-        ),
-        backgroundColor: AppTheme.primaryGreen,
-        duration: const Duration(seconds: 4),
-      ),
+    // Afficher un indicateur de chargement
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
     );
 
-    // Naviguer vers l'écran de confirmation
-    Navigator.pushReplacementNamed(context, '/confirmation');
+    try {
+      // Préparer les données du prestataire
+      String nom = _lastNameController.text.trim();
+      String prenom = _firstNameController.text.trim();
+      String telephone = _phoneController.text.trim();
+      String serviceType = _serviceType;
+      String typeService = 'LES_DEUX'; // Par défaut, les deux types de service
+      String experience = _experienceController.text.trim();
+      String description = _descriptionController.text.trim();
+      String? adresse = _addressController.text.trim().isNotEmpty
+          ? _addressController.text.trim()
+          : null;
+      String? ville = _cityController.text.trim().isNotEmpty
+          ? _cityController.text.trim()
+          : null;
+      String? codePostal = _zipCodeController.text.trim().isNotEmpty
+          ? _zipCodeController.text.trim()
+          : null;
+      String? certifications = _certificationsController.text.trim().isNotEmpty
+          ? _certificationsController.text.trim()
+          : null;
+      String? versionDocument = _selectedDocumentVersion;
+
+      // Préparer les noms des fichiers selon la version sélectionnée
+      String? carteIdentiteRecto;
+      String? carteIdentiteVerso;
+      String? cv;
+      String? diplome;
+      String? imageProfil;
+
+      if (_selectedDocumentVersion == 'Pro') {
+        carteIdentiteRecto = _idCardFrontFile?.name;
+        carteIdentiteVerso = _idCardBackFile?.name;
+        cv = _cvFile?.name;
+        diplome = _diplomaFile?.name;
+        imageProfil = _profilePhotoFile?.name;
+      } else {
+        // Version Simple
+        carteIdentiteRecto = _idCardFrontSimpleFile?.name;
+        carteIdentiteVerso = _idCardBackSimpleFile?.name;
+        imageProfil = _profilePhotoSimpleFile?.name;
+        // CV et diplôme ne sont pas requis pour la version Simple
+      }
+
+      print('🚀 Soumission du prestataire:');
+      print('  - Version: $_selectedDocumentVersion');
+      print('  - Nom: $nom');
+      print('  - Prénom: $prenom');
+      print('  - Téléphone: $telephone');
+      print('  - Service: $serviceType');
+      print('  - Type: $typeService');
+      print('  - Fichiers:');
+      print('    - Photo profil: $imageProfil');
+      print('    - Carte identité recto: $carteIdentiteRecto');
+      print('    - Carte identité verso: $carteIdentiteVerso');
+      print('    - CV: $cv');
+      print('    - Diplôme: $diplome');
+
+      // Enregistrer le prestataire via l'API avec fichiers
+      Map<String, dynamic> result =
+          await ApiService.registerPrestataireWithFiles(
+            nom: nom,
+            prenom: prenom,
+            telephone: telephone,
+            serviceType: serviceType,
+            typeService: typeService,
+            experience: experience,
+            description: description,
+            adresse: adresse,
+            ville: ville,
+            codePostal: codePostal,
+            certifications: certifications,
+            versionDocument: versionDocument,
+            imageProfil: _selectedDocumentVersion == 'Pro'
+                ? _profilePhotoFile
+                : _profilePhotoSimpleFile,
+            carteIdentiteRecto: _selectedDocumentVersion == 'Pro'
+                ? _idCardFrontFile
+                : _idCardFrontSimpleFile,
+            carteIdentiteVerso: _selectedDocumentVersion == 'Pro'
+                ? _idCardBackFile
+                : _idCardBackSimpleFile,
+            cv: _selectedDocumentVersion == 'Pro' ? _cvFile : null,
+            diplome: _selectedDocumentVersion == 'Pro' ? _diplomaFile : null,
+          );
+
+      // Fermer l'indicateur de chargement
+      if (mounted) {
+        Navigator.pop(context);
+      }
+
+      if (result['success']) {
+        // Afficher un message de succès
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '✅ Votre candidature $_selectedDocumentVersion a été enregistrée avec succès dans la base de données ! Vous recevrez une confirmation sous 24-48h.',
+              ),
+              backgroundColor: AppTheme.primaryGreen,
+              duration: const Duration(seconds: 5),
+            ),
+          );
+
+          // Naviguer vers l'écran de confirmation
+          Navigator.pushReplacementNamed(context, '/confirmation');
+        }
+      } else {
+        // Afficher un message d'erreur spécifique
+        if (mounted) {
+          String errorMessage =
+              result['message'] ??
+              'Une erreur est survenue lors de l\'enregistrement de votre candidature. Veuillez réessayer ou contacter le support.';
+          _showErrorDialog('Erreur d\'enregistrement', errorMessage);
+        }
+      }
+    } catch (e) {
+      // Fermer l'indicateur de chargement
+      if (mounted) {
+        Navigator.pop(context);
+      }
+
+      // Afficher un message d'erreur
+      if (mounted) {
+        _showErrorDialog(
+          'Erreur de connexion',
+          'Impossible de se connecter au serveur. Vérifiez votre connexion internet et réessayez.',
+        );
+      }
+      print('❌ Erreur lors de la soumission: $e');
+    }
   }
 
   // Header avec logo Fibaya Pro et texte d'introduction
@@ -2582,10 +2749,10 @@ class _PrestataireRegistrationScreenAPIState
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-              TextField(
-                controller: _experienceController,
-                keyboardType: TextInputType.number,
-                maxLength: 2,
+                  TextField(
+                    controller: _experienceController,
+                    keyboardType: TextInputType.number,
+                    maxLength: 2,
                     textDirection: TextDirection.ltr,
                     textAlign: TextAlign.start,
                     textInputAction: TextInputAction.done,
@@ -2593,37 +2760,37 @@ class _PrestataireRegistrationScreenAPIState
                     autocorrect: false,
                     smartDashesType: SmartDashesType.disabled,
                     smartQuotesType: SmartQuotesType.disabled,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppTheme.primaryGreen,
-                      width: 2,
-                    ),
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey.shade50,
-                  hintText: 'Nombre d\'années d\'expérience',
-                  hintStyle: TextStyle(color: Colors.grey.shade500),
-                  prefixIcon: const Icon(
-                    Icons.work_history,
-                    color: AppTheme.primaryGreen,
-                  ),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: AppTheme.primaryGreen,
+                          width: 2,
+                        ),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey.shade50,
+                      hintText: 'Nombre d\'années d\'expérience',
+                      hintStyle: TextStyle(color: Colors.grey.shade500),
+                      prefixIcon: const Icon(
+                        Icons.work_history,
+                        color: AppTheme.primaryGreen,
+                      ),
                       counterText: '', // Masquer le compteur par défaut
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    _experience = value;
-                  });
-                },
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _experience = value;
+                      });
+                    },
                   ),
                   // Compteur de caractères personnalisé
                   Padding(
@@ -2749,9 +2916,9 @@ class _PrestataireRegistrationScreenAPIState
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-              TextField(
-                controller: _firstNameController,
-                maxLength: 30,
+                  TextField(
+                    controller: _firstNameController,
+                    maxLength: 30,
                     textDirection: TextDirection.ltr,
                     textAlign: TextAlign.start,
                     textInputAction: TextInputAction.next,
@@ -2759,17 +2926,17 @@ class _PrestataireRegistrationScreenAPIState
                     autocorrect: false,
                     smartDashesType: SmartDashesType.disabled,
                     smartQuotesType: SmartQuotesType.disabled,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                    borderSide: BorderSide(
-                      color: AppTheme.primaryGreen,
-                      width: 2,
-                    ),
-                  ),
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        borderSide: BorderSide(
+                          color: AppTheme.primaryGreen,
+                          width: 2,
+                        ),
+                      ),
                       errorBorder: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(12)),
                         borderSide: BorderSide(color: Colors.red, width: 2),
@@ -2778,16 +2945,16 @@ class _PrestataireRegistrationScreenAPIState
                         borderRadius: BorderRadius.all(Radius.circular(12)),
                         borderSide: BorderSide(color: Colors.red, width: 2),
                       ),
-                  hintText: 'Votre prénom',
+                      hintText: 'Votre prénom',
                       errorText: _firstNameError,
                       counterText: '', // Masquer le compteur par défaut
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    _firstName = value;
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _firstName = value;
                         _validateFirstName(value);
-                  });
-                },
+                      });
+                    },
                   ),
                   // Compteur de caractères personnalisé
                   Padding(
@@ -2814,9 +2981,9 @@ class _PrestataireRegistrationScreenAPIState
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-              TextField(
-                controller: _lastNameController,
-                maxLength: 25,
+                  TextField(
+                    controller: _lastNameController,
+                    maxLength: 25,
                     textDirection: TextDirection.ltr,
                     textAlign: TextAlign.start,
                     textInputAction: TextInputAction.next,
@@ -2824,17 +2991,17 @@ class _PrestataireRegistrationScreenAPIState
                     autocorrect: false,
                     smartDashesType: SmartDashesType.disabled,
                     smartQuotesType: SmartQuotesType.disabled,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                    borderSide: BorderSide(
-                      color: AppTheme.primaryGreen,
-                      width: 2,
-                    ),
-                  ),
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        borderSide: BorderSide(
+                          color: AppTheme.primaryGreen,
+                          width: 2,
+                        ),
+                      ),
                       errorBorder: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(12)),
                         borderSide: BorderSide(color: Colors.red, width: 2),
@@ -2843,16 +3010,16 @@ class _PrestataireRegistrationScreenAPIState
                         borderRadius: BorderRadius.all(Radius.circular(12)),
                         borderSide: BorderSide(color: Colors.red, width: 2),
                       ),
-                  hintText: 'Votre nom',
+                      hintText: 'Votre nom',
                       errorText: _lastNameError,
                       counterText: '', // Masquer le compteur par défaut
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    _lastName = value;
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _lastName = value;
                         _validateLastName(value);
-                  });
-                },
+                      });
+                    },
                   ),
                   // Compteur de caractères personnalisé
                   Padding(
@@ -2933,7 +3100,7 @@ class _PrestataireRegistrationScreenAPIState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         TextField(
-                      controller: _phoneController,
+                          controller: _phoneController,
                           maxLength: _getExpectedPhoneLength(),
                           textDirection: TextDirection.ltr,
                           textAlign: TextAlign.start,
@@ -2942,21 +3109,21 @@ class _PrestataireRegistrationScreenAPIState
                           autocorrect: false,
                           smartDashesType: SmartDashesType.disabled,
                           smartQuotesType: SmartQuotesType.disabled,
-                      decoration: InputDecoration(
-                        border: const OutlineInputBorder(
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(
                               borderRadius: BorderRadius.all(
                                 Radius.circular(12),
                               ),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
+                            ),
+                            focusedBorder: const OutlineInputBorder(
                               borderRadius: BorderRadius.all(
                                 Radius.circular(12),
                               ),
-                          borderSide: BorderSide(
-                            color: AppTheme.primaryGreen,
-                            width: 2,
-                          ),
-                        ),
+                              borderSide: BorderSide(
+                                color: AppTheme.primaryGreen,
+                                width: 2,
+                              ),
+                            ),
                             errorBorder: const OutlineInputBorder(
                               borderRadius: BorderRadius.all(
                                 Radius.circular(12),
@@ -2975,17 +3142,17 @@ class _PrestataireRegistrationScreenAPIState
                                 width: 2,
                               ),
                             ),
-                        hintText: 'Numéro de téléphone',
+                            hintText: 'Numéro de téléphone',
                             errorText: _phoneError,
                             counterText: '', // Masquer le compteur par défaut
-                      ),
-                      keyboardType: TextInputType.phone,
-                      onChanged: (value) {
-                        setState(() {
-                          _phone = value;
+                          ),
+                          keyboardType: TextInputType.phone,
+                          onChanged: (value) {
+                            setState(() {
+                              _phone = value;
                               _validatePhone(value);
-                        });
-                      },
+                            });
+                          },
                         ),
                         // Compteur de caractères
                         Padding(
@@ -3015,9 +3182,9 @@ class _PrestataireRegistrationScreenAPIState
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-              TextField(
-                controller: _addressController,
-                maxLength: 50,
+                  TextField(
+                    controller: _addressController,
+                    maxLength: 50,
                     textDirection: TextDirection.ltr,
                     textAlign: TextAlign.start,
                     textInputAction: TextInputAction.next,
@@ -3025,17 +3192,17 @@ class _PrestataireRegistrationScreenAPIState
                     autocorrect: false,
                     smartDashesType: SmartDashesType.disabled,
                     smartQuotesType: SmartQuotesType.disabled,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                    borderSide: BorderSide(
-                      color: AppTheme.primaryGreen,
-                      width: 2,
-                    ),
-                  ),
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        borderSide: BorderSide(
+                          color: AppTheme.primaryGreen,
+                          width: 2,
+                        ),
+                      ),
                       errorBorder: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(12)),
                         borderSide: BorderSide(color: Colors.red, width: 2),
@@ -3044,16 +3211,16 @@ class _PrestataireRegistrationScreenAPIState
                         borderRadius: BorderRadius.all(Radius.circular(12)),
                         borderSide: BorderSide(color: Colors.red, width: 2),
                       ),
-                  hintText: 'Votre adresse',
+                      hintText: 'Votre adresse',
                       errorText: _addressError,
                       counterText: '', // Masquer le compteur par défaut
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    _address = value;
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _address = value;
                         _validateAddress(value);
-                  });
-                },
+                      });
+                    },
                   ),
                   // Compteur de caractères personnalisé
                   Padding(
@@ -3080,9 +3247,9 @@ class _PrestataireRegistrationScreenAPIState
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-              TextField(
-                controller: _cityController,
-                maxLength: 20,
+                  TextField(
+                    controller: _cityController,
+                    maxLength: 20,
                     textDirection: TextDirection.ltr,
                     textAlign: TextAlign.start,
                     textInputAction: TextInputAction.next,
@@ -3090,17 +3257,17 @@ class _PrestataireRegistrationScreenAPIState
                     autocorrect: false,
                     smartDashesType: SmartDashesType.disabled,
                     smartQuotesType: SmartQuotesType.disabled,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                    borderSide: BorderSide(
-                      color: AppTheme.primaryGreen,
-                      width: 2,
-                    ),
-                  ),
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        borderSide: BorderSide(
+                          color: AppTheme.primaryGreen,
+                          width: 2,
+                        ),
+                      ),
                       errorBorder: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(12)),
                         borderSide: BorderSide(color: Colors.red, width: 2),
@@ -3109,16 +3276,16 @@ class _PrestataireRegistrationScreenAPIState
                         borderRadius: BorderRadius.all(Radius.circular(12)),
                         borderSide: BorderSide(color: Colors.red, width: 2),
                       ),
-                  hintText: 'Votre ville',
+                      hintText: 'Votre ville',
                       errorText: _cityError,
                       counterText: '', // Masquer le compteur par défaut
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    _city = value;
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _city = value;
                         _validateCity(value);
-                  });
-                },
+                      });
+                    },
                   ),
                   // Compteur de caractères personnalisé
                   Padding(
@@ -3145,10 +3312,10 @@ class _PrestataireRegistrationScreenAPIState
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-              TextField(
-                controller: _zipCodeController,
-                keyboardType: TextInputType.text,
-                maxLength: 12,
+                  TextField(
+                    controller: _zipCodeController,
+                    keyboardType: TextInputType.text,
+                    maxLength: 12,
                     textDirection: TextDirection.ltr,
                     textAlign: TextAlign.start,
                     textInputAction: TextInputAction.next,
@@ -3156,17 +3323,17 @@ class _PrestataireRegistrationScreenAPIState
                     autocorrect: false,
                     smartDashesType: SmartDashesType.disabled,
                     smartQuotesType: SmartQuotesType.disabled,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                    borderSide: BorderSide(
-                      color: AppTheme.primaryGreen,
-                      width: 2,
-                    ),
-                  ),
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        borderSide: BorderSide(
+                          color: AppTheme.primaryGreen,
+                          width: 2,
+                        ),
+                      ),
                       errorBorder: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(12)),
                         borderSide: BorderSide(color: Colors.red, width: 2),
@@ -3175,16 +3342,16 @@ class _PrestataireRegistrationScreenAPIState
                         borderRadius: BorderRadius.all(Radius.circular(12)),
                         borderSide: BorderSide(color: Colors.red, width: 2),
                       ),
-                  hintText: 'Code postal',
+                      hintText: 'Code postal',
                       errorText: _zipCodeError,
                       counterText: '', // Masquer le compteur par défaut
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    _zipCode = value;
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _zipCode = value;
                         _validateZipCode(value);
-                  });
-                },
+                      });
+                    },
                   ),
                   // Compteur de caractères personnalisé
                   Padding(
@@ -3211,12 +3378,12 @@ class _PrestataireRegistrationScreenAPIState
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-              TextField(
-                controller: _certificationsController,
-                maxLines: 3,
-                maxLength: 600,
-                textDirection: TextDirection.ltr,
-                textAlign: TextAlign.start,
+                  TextField(
+                    controller: _certificationsController,
+                    maxLines: 3,
+                    maxLength: 600,
+                    textDirection: TextDirection.ltr,
+                    textAlign: TextAlign.start,
                     textInputAction: TextInputAction.done,
                     enableSuggestions: false,
                     autocorrect: false,
@@ -3224,15 +3391,15 @@ class _PrestataireRegistrationScreenAPIState
                     smartQuotesType: SmartQuotesType.disabled,
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                  ),
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                      ),
                       focusedBorder: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                    borderSide: BorderSide(
-                      color: AppTheme.primaryGreen,
-                      width: 2,
-                    ),
-                  ),
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        borderSide: BorderSide(
+                          color: AppTheme.primaryGreen,
+                          width: 2,
+                        ),
+                      ),
                       errorBorder: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(12)),
                         borderSide: BorderSide(color: Colors.red, width: 2),
@@ -3241,16 +3408,16 @@ class _PrestataireRegistrationScreenAPIState
                         borderRadius: BorderRadius.all(Radius.circular(12)),
                         borderSide: BorderSide(color: Colors.red, width: 2),
                       ),
-                  hintText:
-                      'Listez vos certifications, diplômes ou formations pertinentes...',
+                      hintText:
+                          'Listez vos certifications, diplômes ou formations pertinentes...',
                       errorText: _certificationsError,
                       counterText: '', // Masquer le compteur par défaut
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    _certifications = value;
-                  });
-                },
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _certifications = value;
+                      });
+                    },
                   ),
                   // Compteur de caractères personnalisé
                   Padding(
@@ -3445,9 +3612,9 @@ class _PrestataireRegistrationScreenAPIState
                           color: Colors.red[600],
                           size: 20,
                         ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
                             'ATTENTION : Documents authentiques requis',
                             style: TextStyle(
                               color: Colors.red[700],
@@ -3712,9 +3879,7 @@ class _PrestataireRegistrationScreenAPIState
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              onPressed: _isFilePickerActive
-                  ? null
-                  : () => _pickFile(title),
+              onPressed: _isFilePickerActive ? null : () => _pickFile(title),
               icon: Icon(isUploaded ? Icons.refresh : Icons.upload),
               label: Text(isUploaded ? 'Remplacer' : 'Télécharger'),
               style: ElevatedButton.styleFrom(

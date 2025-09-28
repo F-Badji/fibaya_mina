@@ -1,8 +1,15 @@
 # Configuration du serveur
 server:
   port: 8081
+  address: 0.0.0.0
   servlet:
     context-path: /
+  # Configuration des limites de taille des requêtes
+  max-http-header-size: 8KB
+  tomcat:
+    max-http-post-size: 200MB
+    max-connections: 8192
+    accept-count: 100
 
 # Configuration de la base de données PostgreSQL
 spring:
@@ -37,6 +44,15 @@ spring:
       allowed-headers: "*"
       allow-credentials: false
       max-age: 3600
+
+  # Configuration des limites de taille des fichiers
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 200MB
+      enabled: true
+      file-size-threshold: 2KB
+      location: ${java.io.tmpdir}
 
 # Configuration des logs
 logging:
