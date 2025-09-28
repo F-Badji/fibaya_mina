@@ -11,9 +11,7 @@ import {
   Map,
   Settings,
   ChevronDown,
-  ChevronRight,
-  Menu,
-  X
+  ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -68,7 +66,6 @@ export function AdminSidebar() {
   const location = useLocation();
   const currentPath = location.pathname;
   const [expandedGroups, setExpandedGroups] = useState<string[]>(["Gestion Utilisateurs"]);
-  const [collapsed, setCollapsed] = useState(false);
 
   const isActive = (path: string) => currentPath === path;
   const isGroupExpanded = (title: string) => expandedGroups.includes(title);
@@ -90,32 +87,17 @@ export function AdminSidebar() {
     );
 
   return (
-    <div
-      className={cn(
-        "border-r border-border bg-gradient-to-b from-card to-secondary/20 flex flex-col h-screen",
-        collapsed ? "w-16" : "w-64"
-      )}
-    >
+    <div className="border-r border-border bg-gradient-to-b from-card to-secondary/20 flex flex-col h-screen w-64">
       {/* Header */}
       <div className="p-4 border-b border-border">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">F</span>
-            </div>
-            {!collapsed && (
-              <div>
-                <h2 className="font-bold text-primary">FIBAYA</h2>
-                <p className="text-xs text-muted-foreground">Admin Panel</p>
-              </div>
-            )}
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+            <span className="text-primary-foreground font-bold text-sm">F</span>
           </div>
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="p-1 rounded-md hover:bg-primary/10 transition-colors"
-          >
-            {collapsed ? <Menu className="h-4 w-4" /> : <X className="h-4 w-4" />}
-          </button>
+          <div>
+            <h2 className="font-bold text-primary">FIBAYA</h2>
+            <p className="text-xs text-muted-foreground">Admin Panel</p>
+          </div>
         </div>
       </div>
 
@@ -128,23 +110,19 @@ export function AdminSidebar() {
                 <div>
                   <button
                     onClick={() => toggleGroup(item.title)}
-                    className={cn(
-                      "w-full justify-between text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200",
-                      collapsed && "justify-center"
-                    )}
+                    className="w-full justify-between text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200"
                   >
                     <div className="flex items-center gap-3">
                       <item.icon className="h-4 w-4" />
-                      {!collapsed && <span>{item.title}</span>}
+                      <span>{item.title}</span>
                     </div>
-                    {!collapsed && (
-                      isGroupExpanded(item.title) ? 
-                        <ChevronDown className="h-4 w-4" /> : 
-                        <ChevronRight className="h-4 w-4" />
-                    )}
+                    {isGroupExpanded(item.title) ? 
+                      <ChevronDown className="h-4 w-4" /> : 
+                      <ChevronRight className="h-4 w-4" />
+                    }
                   </button>
                   
-                  {isGroupExpanded(item.title) && !collapsed && (
+                  {isGroupExpanded(item.title) && (
                     <div className="ml-6 mt-1 space-y-1">
                       {item.subItems.map((subItem) => (
                         <NavLink
@@ -166,7 +144,7 @@ export function AdminSidebar() {
                   className={getNavClasses(isActive(item.url))}
                 >
                   <item.icon className="h-4 w-4" />
-                  {!collapsed && <span>{item.title}</span>}
+                  <span>{item.title}</span>
                 </NavLink>
               )}
             </div>
