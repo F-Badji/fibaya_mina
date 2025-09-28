@@ -10,12 +10,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 
-export function AdminHeader() {
+interface AdminHeaderProps {
+  onToggleSidebar: () => void;
+}
+
+export function AdminHeader({ onToggleSidebar }: AdminHeaderProps) {
   return (
     <header className="bg-card border-b border-border px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="text-muted-foreground hover:text-foreground"
+            onClick={onToggleSidebar}
+          >
             <Menu className="h-5 w-5" />
           </Button>
           <div className="relative w-96">

@@ -62,7 +62,12 @@ const menuItems = [
   },
 ];
 
-export function AdminSidebar() {
+interface AdminSidebarProps {
+  collapsed: boolean;
+  onToggle: () => void;
+}
+
+export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
   const location = useLocation();
   const currentPath = location.pathname;
   const [expandedGroups, setExpandedGroups] = useState<string[]>(["Gestion Utilisateurs"]);
@@ -87,17 +92,22 @@ export function AdminSidebar() {
     );
 
   return (
-    <div className="border-r border-border bg-gradient-to-b from-card to-secondary/20 flex flex-col h-screen w-64">
+    <div className={cn(
+      "border-r border-border bg-gradient-to-b from-card to-secondary/20 flex flex-col h-screen transition-all duration-300",
+      collapsed ? "w-16" : "w-64"
+    )}>
       {/* Header */}
       <div className="p-4 border-b border-border">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
             <span className="text-primary-foreground font-bold text-sm">F</span>
           </div>
-          <div>
-            <h2 className="font-bold text-primary">FIBAYA</h2>
-            <p className="text-xs text-muted-foreground">Admin Panel</p>
-          </div>
+          {!collapsed && (
+            <div>
+              <h2 className="font-bold text-primary">FIBAYA</h2>
+              <p className="text-xs text-muted-foreground">Admin Panel</p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -110,19 +120,23 @@ export function AdminSidebar() {
                 <div>
                   <button
                     onClick={() => toggleGroup(item.title)}
-                    className="w-full justify-between text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200"
+                    className={cn(
+                      "w-full justify-between text-muted-foreground hover:text-primary hover:bg-primary/10 flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200",
+                      collapsed && "justify-center"
+                    )}
                   >
                     <div className="flex items-center gap-3">
                       <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
+                      {!collapsed && <span>{item.title}</span>}
                     </div>
-                    {isGroupExpanded(item.title) ? 
-                      <ChevronDown className="h-4 w-4" /> : 
-                      <ChevronRight className="h-4 w-4" />
-                    }
+                    {!collapsed && (
+                      isGroupExpanded(item.title) ? 
+                        <ChevronDown className="h-4 w-4" /> : 
+                        <ChevronRight className="h-4 w-4" />
+                    )}
                   </button>
                   
-                  {isGroupExpanded(item.title) && (
+                  {isGroupExpanded(item.title) && !collapsed && (
                     <div className="ml-6 mt-1 space-y-1">
                       {item.subItems.map((subItem) => (
                         <NavLink
@@ -144,7 +158,7 @@ export function AdminSidebar() {
                   className={getNavClasses(isActive(item.url))}
                 >
                   <item.icon className="h-4 w-4" />
-                  <span>{item.title}</span>
+                  {!collapsed && <span>{item.title}</span>}
                 </NavLink>
               )}
             </div>

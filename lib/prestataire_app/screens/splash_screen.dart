@@ -85,7 +85,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Phase 5: Complete the splash screen
     if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/welcome');
+      Navigator.of(context).pushReplacementNamed('/prestataire-auth');
     }
   }
 

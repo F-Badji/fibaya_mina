@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'screens/splash_screen.dart';
 import 'screens/welcome_screen.dart';
+import 'screens/prestataire_auth_screen.dart';
 import 'screens/prestataire_registration_screen_api.dart';
 import 'screens/confirmation_screen.dart';
 import 'screens/location_permission_screen.dart';
 import 'screens/home_screen.dart';
+import 'services/status_check_service.dart';
 
 void main() {
+  // Enregistrer les services GetX
+  Get.put(StatusCheckService());
+
   runApp(const FibayaPrestataireApp());
 }
 
@@ -16,7 +22,7 @@ class FibayaPrestataireApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'FIBAYA - Prestataire',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -50,7 +56,9 @@ class FibayaPrestataireApp extends StatelessWidget {
       ),
       home: const SplashScreen(),
       routes: {
+        '/splash': (context) => const SplashScreen(),
         '/welcome': (context) => const WelcomeScreen(),
+        '/prestataire-auth': (context) => const PrestataireAuthScreen(),
         '/prestataire-registration': (context) =>
             const PrestataireRegistrationScreenAPI(),
         '/confirmation': (context) => const ConfirmationScreen(),

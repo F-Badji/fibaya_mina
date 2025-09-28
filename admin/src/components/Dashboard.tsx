@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import axios from "axios";
 
 const mockStats = {
   totalClients: 2847,
@@ -64,6 +65,24 @@ const mockPendingPrestataires = [
 ];
 
 export function Dashboard() {
+  const handleValidatePrestataire = async (prestataireId: string) => {
+    try {
+      // Convertir l'ID string en number pour l'API
+      const id = parseInt(prestataireId.replace('PREST-', ''));
+      const response = await axios.patch(`http://localhost:8080/api/prestataires/${id}/valider?validePar=admin`);
+      
+      if (response.data.success) {
+        alert('Prestataire validé avec succès !');
+        // Ici on pourrait recharger les données ou mettre à jour l'état local
+      } else {
+        alert('Erreur lors de la validation: ' + response.data.message);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la validation:', error);
+      alert('Erreur lors de la validation du prestataire');
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "En cours":
@@ -214,7 +233,11 @@ export function Dashboard() {
                   </div>
 
                   <div className="flex gap-2">
-                    <Button size="sm" className="flex-1 bg-green-600 hover:bg-green-700">
+                    <Button 
+                      size="sm" 
+                      className="flex-1 bg-green-600 hover:bg-green-700"
+                      onClick={() => handleValidatePrestataire(prestataire.id)}
+                    >
                       Valider
                     </Button>
                     <Button size="sm" variant="outline" className="flex-1">

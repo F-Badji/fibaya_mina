@@ -1,7 +1,9 @@
 package com.fibaya.backend.controllers;
 
 import com.fibaya.backend.models.Prestataire;
+import com.fibaya.backend.models.PrestataireValide;
 import com.fibaya.backend.services.PrestataireService;
+import com.fibaya.backend.services.PrestataireValideService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,6 +27,9 @@ public class PrestataireController {
 
     @Autowired
     private PrestataireService prestataireService;
+    
+    @Autowired
+    private PrestataireValideService prestataireValideService;
 
     // Obtenir tous les prestataires disponibles
     @GetMapping("/disponibles")
@@ -210,6 +216,51 @@ public class PrestataireController {
         }
     }
 
+    // Valider un prestataire (changer le statut vers DISPONIBLE et l'ajouter à la liste des validés)
+    @PatchMapping("/{id}/valider")
+    public ResponseEntity<Map<String, Object>> validerPrestataire(@PathVariable Long id, @RequestParam(defaultValue = "admin") String validePar) {
+        try {
+            Optional<Prestataire> prestataire = prestataireService.getPrestataireById(id);
+            if (prestataire.isEmpty()) {
+                Map<String, Object> errorResponse = Map.of(
+                    "success", false,
+                    "message", "Prestataire non trouvé"
+                );
+                return ResponseEntity.notFound().build();
+            }
+
+            Prestataire p = prestataire.get();
+            
+            // Mettre à jour le statut vers DISPONIBLE
+            Optional<Prestataire> updatedPrestataire = prestataireService.updateStatut(id, "DISPONIBLE");
+            
+            if (updatedPrestataire.isPresent()) {
+                // Ajouter le prestataire à la liste des validés
+                prestataireValideService.validerPrestataire(p, validePar);
+                
+                Map<String, Object> response = Map.of(
+                    "success", true,
+                    "message", "Prestataire validé avec succès et ajouté à la liste des validés",
+                    "prestataire", updatedPrestataire.get(),
+                    "telephone", p.getTelephone()
+                );
+                return ResponseEntity.ok(response);
+            } else {
+                Map<String, Object> errorResponse = Map.of(
+                    "success", false,
+                    "message", "Erreur lors de la validation du prestataire"
+                );
+                return ResponseEntity.internalServerError().body(errorResponse);
+            }
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = Map.of(
+                "success", false,
+                "message", "Erreur interne du serveur: " + e.getMessage()
+            );
+            return ResponseEntity.internalServerError().body(errorResponse);
+        }
+    }
+
     // Obtenir les statistiques des prestataires
     @GetMapping("/statistiques")
     public ResponseEntity<Object> getStatistiquesPrestataires() {
@@ -229,6 +280,69 @@ public class PrestataireController {
             return deleted ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // Vérifier si un numéro de téléphone est validé par l'administrateur
+    @GetMapping("/check-validation/{telephone}")
+    public ResponseEntity<Map<String, Object>> checkValidation(@PathVariable String telephone) {
+        try {
+            boolean isValide = prestataireValideService.isPrestataireValide(telephone);
+            Map<String, Object> response = Map.of(
+                "telephone", telephone,
+                "isValide", isValide,
+                "message", isValide ? "Numéro validé par l'administrateur" : "Numéro non validé"
+            );
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = Map.of(
+                "success", false,
+                "message", "Erreur lors de la vérification: " + e.getMessage()
+            );
+            return ResponseEntity.internalServerError().body(errorResponse);
+        }
+    }
+
+    // Suspendre un prestataire validé
+    @PatchMapping("/{id}/suspendre")
+    public ResponseEntity<Map<String, Object>> suspendrePrestataire(@PathVariable Long id, @RequestParam(defaultValue = "admin") String validePar) {
+        try {
+            Optional<Prestataire> prestataire = prestataireService.getPrestataireById(id);
+            if (prestataire.isEmpty()) {
+                Map<String, Object> errorResponse = Map.of(
+                    "success", false,
+                    "message", "Prestataire non trouvé"
+                );
+                return ResponseEntity.notFound().build();
+            }
+
+            Prestataire p = prestataire.get();
+            
+            // Suspendre le prestataire dans la table des validés
+            PrestataireValide prestataireSuspendu = prestataireValideService.suspendrePrestataire(p.getTelephone(), validePar);
+            
+            if (prestataireSuspendu != null) {
+                Map<String, Object> response = Map.of(
+                    "success", true,
+                    "message", "Prestataire suspendu avec succès",
+                    "prestataire", p,
+                    "telephone", p.getTelephone(),
+                    "statut", "SUSPENDU"
+                );
+                return ResponseEntity.ok(response);
+            } else {
+                Map<String, Object> errorResponse = Map.of(
+                    "success", false,
+                    "message", "Prestataire non trouvé dans la liste des validés"
+                );
+                return ResponseEntity.badRequest().body(errorResponse);
+            }
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = Map.of(
+                "success", false,
+                "message", "Erreur interne du serveur: " + e.getMessage()
+            );
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 }

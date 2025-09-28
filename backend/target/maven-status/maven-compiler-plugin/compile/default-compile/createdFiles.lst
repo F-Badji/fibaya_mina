@@ -1,3 +1,4 @@
+com/fibaya/backend/config/CorsConfig.class
 com/fibaya/backend/models/Reservation$ReservationStatus.class
 com/fibaya/backend/controllers/AuthController.class
 com/fibaya/backend/repositories/CountryRepository.class
@@ -14,10 +15,14 @@ com/fibaya/backend/FibayaBackendApplication.class
 com/fibaya/backend/repositories/UserRepository.class
 com/fibaya/backend/repositories/ServiceRepository.class
 com/fibaya/backend/models/Notification$NotificationStatus.class
+com/fibaya/backend/controllers/PhoneValidationController.class
 com/fibaya/backend/models/Prestataire.class
 com/fibaya/backend/models/Reservation.class
 com/fibaya/backend/models/User$UserType.class
 com/fibaya/backend/repositories/NotificationRepository.class
+com/fibaya/backend/services/PhoneValidationService.class
 com/fibaya/backend/models/Service.class
+com/fibaya/backend/models/PhoneFormat.class
 com/fibaya/backend/services/AuthService.class
+com/fibaya/backend/repositories/PhoneFormatRepository.class
 com/fibaya/backend/services/ServiceService.class

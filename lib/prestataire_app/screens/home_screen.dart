@@ -4,6 +4,7 @@ import 'orders_screen.dart';
 import 'wallet_screen.dart';
 import 'profile_screen.dart';
 import 'map_screen.dart';
+import '../services/status_check_mixin.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,7 +13,8 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with TickerProviderStateMixin, StatusCheckMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
 
@@ -40,11 +42,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
 
     _fadeController.forward();
+
+    // Démarrer la vérification du statut (avec un numéro de test pour l'instant)
+    _startStatusCheck();
   }
 
   @override
   void dispose() {
     _fadeController.dispose();
+
+    // Arrêter la vérification du statut
+    try {
+      stopStatusCheck();
+    } catch (e) {
+      print('Erreur lors de l\'arrêt de la vérification du statut: $e');
+    }
+
     super.dispose();
   }
 
@@ -131,6 +144,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       ),
     );
   }
+
+  void _startStatusCheck() {
+    // Utiliser le numéro du prestataire validé
+    String testPhone = "780000000"; // Numéro du prestataire validé
+    String testCountryCode = "+221";
+
+    // Démarrer la vérification du statut GLOBALE pour tous les écrans
+    startStatusCheck(testPhone, testCountryCode);
+    print('🔍 Vérification globale du statut démarrée pour tous les écrans');
+  }
 }
 
 // Écran Dashboard (Accueil) - EXACTEMENT comme green-pro-hub
@@ -142,7 +165,7 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, StatusCheckMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
 
@@ -202,12 +225,33 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
 
     _fadeController.forward();
+
+    // Démarrer la vérification du statut pour cet écran aussi
+    _startStatusCheckForScreen();
   }
 
   @override
   void dispose() {
     _fadeController.dispose();
+
+    // Arrêter la vérification du statut pour cet écran
+    try {
+      stopStatusCheck();
+    } catch (e) {
+      print('Erreur lors de l\'arrêt de la vérification du statut: $e');
+    }
+
     super.dispose();
+  }
+
+  void _startStatusCheckForScreen() {
+    // Utiliser le même numéro que l'écran principal
+    String testPhone = "780000000";
+    String testCountryCode = "+221";
+
+    // Démarrer la vérification du statut pour cet écran
+    startStatusCheck(testPhone, testCountryCode);
+    print('🔍 Vérification du statut démarrée pour DashboardScreen');
   }
 
   @override

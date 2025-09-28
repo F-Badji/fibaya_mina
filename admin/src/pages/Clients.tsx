@@ -172,8 +172,8 @@ const Clients = () => {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Gestion des Clients</h1>
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Gestion des Clients</h1>
             <p className="text-muted-foreground">Gérez et suivez tous vos clients</p>
           </div>
           <div className="flex gap-3">
@@ -246,7 +246,7 @@ const Clients = () => {
             </CardContent>
           </Card>
         </div>
-
+        
         {/* Filters and Search */}
         <Card>
           <CardContent className="p-6">

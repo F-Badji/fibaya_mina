@@ -138,7 +138,7 @@ const Parametres = () => {
           <Card className="bg-gradient-to-br from-blue-500/5 to-blue-500/10 border-blue-500/20">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
-                <div>
+        <div>
                   <p className="text-sm text-muted-foreground">Statut système</p>
                   <p className="text-2xl font-bold text-blue-600">
                     {settings.maintenanceMode ? "Maintenance" : "Actif"}
@@ -151,7 +151,7 @@ const Parametres = () => {
             </CardContent>
           </Card>
         </div>
-
+        
         {/* Settings Tabs */}
         <Tabs value={selectedTab} onValueChange={setSelectedTab}>
           <TabsList className="grid w-full grid-cols-5">
@@ -355,14 +355,14 @@ const Parametres = () => {
           </TabsContent>
 
           <TabsContent value="payments" className="space-y-6">
-            <Card>
-              <CardHeader>
+        <Card>
+          <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <CreditCard className="h-5 w-5" />
                   Moyens de paiement
                 </CardTitle>
-              </CardHeader>
-              <CardContent>
+          </CardHeader>
+          <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -532,8 +532,8 @@ const Parametres = () => {
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+          </CardContent>
+        </Card>
           </TabsContent>
         </Tabs>
       </div>

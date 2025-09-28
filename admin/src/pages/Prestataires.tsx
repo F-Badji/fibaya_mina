@@ -50,7 +50,7 @@ const Prestataires = () => {
   const handleDownload = async (fileName: string, documentType: string) => {
     try {
       // URL du backend pour télécharger les fichiers
-      const backendUrl = 'http://localhost:8081/api/files';
+      const backendUrl = 'http://localhost:8080/api/files';
       const downloadUrl = `${backendUrl}/${fileName}`;
       
       // Créer un lien de téléchargement
@@ -74,12 +74,47 @@ const Prestataires = () => {
   const fetchPrestataires = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:8081/api/prestataires/disponibles');
+      const response = await axios.get('http://localhost:8080/api/prestataires/disponibles');
       setPrestataires(response.data);
     } catch (error) {
       console.error('Erreur lors du chargement des prestataires:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleValidatePrestataire = async (prestataireId: number) => {
+    try {
+      const response = await axios.patch(`http://localhost:8080/api/prestataires/${prestataireId}/valider?validePar=admin`);
+      
+      if (response.data.success) {
+        // Afficher un message de succès
+        alert('Prestataire validé avec succès !');
+        
+        // Recharger la liste des prestataires
+        fetchPrestataires();
+      } else {
+        alert('Erreur lors de la validation: ' + response.data.message);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la validation:', error);
+      alert('Erreur lors de la validation du prestataire');
+    }
+  };
+
+  const handleSuspendPrestataire = async (prestataireId: number) => {
+    try {
+      const response = await axios.patch(`http://localhost:8080/api/prestataires/${prestataireId}/suspendre?validePar=admin`);
+
+      if (response.data.success) {
+        alert('Prestataire suspendu avec succès !');
+        fetchPrestataires();
+      } else {
+        alert('Erreur lors de la suspension: ' + response.data.message);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la suspension:', error);
+      alert('Erreur lors de la suspension du prestataire');
     }
   };
 
@@ -333,11 +368,17 @@ const Prestataires = () => {
                               <FileText className="h-4 w-4" />
                               Documents
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="gap-2 text-green-600">
+                            <DropdownMenuItem 
+                              className="gap-2 text-green-600"
+                              onClick={() => handleValidatePrestataire(prestataire.id)}
+                            >
                               <CheckCircle className="h-4 w-4" />
                               Valider
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="gap-2 text-red-600">
+                            <DropdownMenuItem 
+                              className="gap-2 text-red-600"
+                              onClick={() => handleSuspendPrestataire(prestataire.id)}
+                            >
                               <Ban className="h-4 w-4" />
                               Suspendre
                             </DropdownMenuItem>
